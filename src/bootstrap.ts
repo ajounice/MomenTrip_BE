@@ -3,7 +3,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from '@/AppModule';
 
-export const bootstrap = async () => {
+export const bootstrap = async (): Promise<NestExpressApplication> => {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
     app.disable('x-powered-by');
@@ -12,5 +12,5 @@ export const bootstrap = async () => {
 
     app.use(cookieParser());
 
-    await app.listen(3000);
+    return app;
 };
