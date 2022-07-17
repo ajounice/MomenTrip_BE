@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  mysql:
+    container_name: momentrip_mysql
+    image: mysql
+    command:
+      - --lower_case_table_names=1
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_bin
+    environment:
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=1234
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=momentrip
+      - TZ=UTC
+    restart: always
+    volumes:
+      - mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+networks:
+  default:
+
+volumes:
+  mysql:

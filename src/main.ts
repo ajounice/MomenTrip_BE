@@ -1,8 +1,10 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { bootstrap } from '@/bootstrap';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
-}
-bootstrap();
+bootstrap()
+    .then(() => {
+        console.log('server started');
+    })
+    .catch((err) => {
+        console.error('error occurred', err);
+        process.exit(1);
+    });
