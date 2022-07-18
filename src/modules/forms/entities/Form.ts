@@ -9,7 +9,7 @@ export class Form {
     content!: string;
 
     @Column({ nullable: true })
-    name!: string;
+    title!: string;
 
     @Column()
     thumbnail!: string;
@@ -18,5 +18,5 @@ export class Form {
     video!: string;
 
     @Column({ default: 0 })
-    count!: number;
+    viewCount!: number;
 }

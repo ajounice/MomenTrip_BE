@@ -1,6 +1,6 @@
 import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '@/modules/users/entities';
-import { Form } from '@/modules/form/entities/Form';
+import { Form } from '@/modules/forms/entities/Form';
 
 @Entity({ name: 'form_likes' })
 export class FormLike {

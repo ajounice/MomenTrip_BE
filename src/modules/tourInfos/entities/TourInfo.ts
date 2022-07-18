@@ -24,5 +24,5 @@ export class TourInfo {
     price!: number;
 
     @Column({ default: 0 })
-    count!: number;
+    viewCount!: number;
 }

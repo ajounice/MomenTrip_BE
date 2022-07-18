@@ -2,7 +2,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Form, FormComment, FormLike } from '@/modules/form/entities';
+import { Form, FormComment, FormLike } from '@/modules/forms/entities';
 import { TourInfo, TourInfoLike, TourInfoComment } from '@/modules/tourInfos/entities';
 import { User, UserStatistics, Badge, Following } from '@/modules/users/entities';
 import { Wishlist } from '@/modules/wishlists/entities/Wishlist';
