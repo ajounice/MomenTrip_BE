@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '@/modules/users/UserModule';
 import { DatabaseConfigModule, DatabaseConfigService } from '@/config/database';
+import { FormModule } from '@/modules/forms/FormModule';
+import { TourInfoModule } from '@/modules/tourInfos/TourInfoModule';
 
 @Module({
     imports: [
@@ -12,7 +14,9 @@ import { DatabaseConfigModule, DatabaseConfigService } from '@/config/database';
             useClass: DatabaseConfigService,
             inject: [DatabaseConfigService],
         }),
+        FormModule,
         UserModule,
+        TourInfoModule,
     ],
     controllers: [],
     providers: [],
