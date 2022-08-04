@@ -12,14 +12,11 @@ export class User {
     @Column({ unique: true })
     kakaoId!: string;
 
+    @Column()
+    accessToken: string;
+
     @Column({ unique: true, nullable: false })
     nickname!: string;
-
-    @Column()
-    accessToken!: string;
-
-    @Column({ nullable: false })
-    password!: string;
 
     @Column({ unique: true, nullable: false })
     email!: string;

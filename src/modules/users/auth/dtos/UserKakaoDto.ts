@@ -16,4 +16,7 @@ export class UserKakaoDto {
     @IsString()
     @IsNotEmpty()
     accessToken: string;
+
+    @IsString()
+    image: string | null;
 }

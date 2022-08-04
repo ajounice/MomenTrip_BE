@@ -19,5 +19,5 @@ export class UserWithAccessTokenDto {
 
     @IsOptional()
     @IsEmail()
-    email: string;
+    email: string | null;
 }
