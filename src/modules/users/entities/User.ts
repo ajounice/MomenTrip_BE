@@ -21,7 +21,7 @@ export class User {
     @Column({ nullable: false, default: false })
     type!: boolean;
 
-    @Column()
+    @Column({ nullable: true })
     image!: string;
 
     @OneToOne(() => UserStatistics, (statistics) => statistics.user, { onDelete: 'CASCADE' })

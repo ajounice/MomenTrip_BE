@@ -3,6 +3,7 @@ import { UserController } from './UserController';
 import { UserService } from './UserService';
 
 @Module({
+    exports: [],
     imports: [],
     controllers: [UserController],
     providers: [UserService],
