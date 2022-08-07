@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,6 +7,7 @@ import { FormModule } from '@/modules/forms/FormModule';
 import { DatabaseConfigModule, DatabaseConfigService } from '@/config/database';
 import { TagModule } from '@/modules/tags/TagModule';
 import { ValidationPipe } from '@/common/pipes';
+import { LoggerMiddleware } from '@/common/middlewares';
 
 @Module({
     imports: [
@@ -28,4 +29,8 @@ import { ValidationPipe } from '@/common/pipes';
         },
     ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer): any {
+        consumer.apply(LoggerMiddleware).forRoutes('*');
+    }
+}
