@@ -1,4 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Tag } from '@/modules/tags/entities/Tag';
+import { TourInfoComment } from '@/modules/tourInfos/entities/TourInfoComment';
+import { TourInfoLike } from '@/modules/tourInfos/entities/TourInfoLike';
 
 export enum placeType {
     CITY = 'CITY',
@@ -25,4 +28,24 @@ export class TourInfo {
 
     @Column({ default: 0 })
     viewCount!: number;
+
+    @OneToMany(() => TourInfoComment, (tourInfoComment) => tourInfoComment.tourInfo)
+    comments!: TourInfoComment[];
+
+    @OneToMany(() => TourInfoLike, (tourInfoLike) => tourInfoLike.tourInfo)
+    likes!: TourInfoLike[];
+
+    @JoinTable({
+        name: 'tourinfos_tags',
+        joinColumn: {
+            name: 'tourInfo_id',
+            referencedColumnName: 'id',
+        },
+        inverseJoinColumn: {
+            name: 'tag_id',
+            referencedColumnName: 'id',
+        },
+    })
+    @ManyToMany(() => Tag)
+    tags!: Tag[];
 }
