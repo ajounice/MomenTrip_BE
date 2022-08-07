@@ -23,7 +23,7 @@ export class TourInfo {
     @Column({ type: 'point' })
     place!: any;
 
-    @Column()
+    @Column({ default: 0 })
     price!: number;
 
     @Column({ default: 0 })

@@ -41,6 +41,7 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
             namingStrategy: new SnakeNamingStrategy(),
             logging: this.configService.get<string>('NODE_ENV') !== 'production',
             synchronize: this.configService.get<string>('NODE_ENV') !== 'production',
+            legacySpatialSupport: false,
         };
     }
 }
