@@ -5,6 +5,7 @@ import { UserModule } from '@/modules/users/UserModule';
 import { DatabaseConfigModule, DatabaseConfigService } from '@/config/database';
 import { FormModule } from '@/modules/forms/FormModule';
 import { TourInfoModule } from '@/modules/tourInfos/TourInfoModule';
+import { AuthModule } from '@/modules/auth/AuthModule';
 
 @Module({
     imports: [
@@ -17,6 +18,7 @@ import { TourInfoModule } from '@/modules/tourInfos/TourInfoModule';
         FormModule,
         UserModule,
         TourInfoModule,
+        AuthModule,
     ],
     controllers: [],
     providers: [],

@@ -11,12 +11,13 @@ export class UserKakaoDto {
 
     @IsString()
     @IsNotEmpty()
-    kakaoId: string;
+    name: string;
 
     @IsString()
     @IsNotEmpty()
     accessToken: string;
 
+    @IsOptional()
     @IsString()
     image: string | null;
 }

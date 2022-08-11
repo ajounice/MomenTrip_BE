@@ -9,12 +9,6 @@ export class User {
     @PrimaryGeneratedColumn({ unsigned: true })
     id!: number;
 
-    @Column({ unique: true })
-    kakaoId!: string;
-
-    @Column()
-    accessToken: string;
-
     @Column({ unique: true, nullable: false })
     nickname!: string;
 

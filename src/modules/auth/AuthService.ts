@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
-import { UserKakaoDto } from '@/modules/users/auth/dtos';
+import { UserKakaoDto } from '@/modules/auth/dtos';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -13,20 +13,23 @@ export class AuthService {
         private readonly jwtService: JwtService,
     ) {}
 
-    async kakaoLogin(userKakao: UserKakaoDto): Promise<{ accessToken: string }> {
-        const { kakaoId, nickname, email, image } = userKakao;
-        let user = await this.userRepository.findOne({ where: { kakaoId: userKakao.kakaoId } });
+    async kakaoLogin(userKakaoDto: UserKakaoDto): Promise<{ accessToken: string }> {
+        const { nickname, name, email, image } = userKakaoDto;
+        let user = await this.userRepository.findOne({
+            where: { nickname: userKakaoDto.nickname },
+        });
         if (!user) {
             user = this.userRepository.create({
-                kakaoId,
                 nickname,
+                name,
                 email,
                 image,
             });
             await this.userRepository.save(user);
         }
-        const payload = { id: user.id, accessToken: userKakao.accessToken };
+        const payload = { id: user.id };
         const accessToken = this.jwtService.sign(payload);
+        console.log(accessToken);
         return { accessToken };
     }
 }

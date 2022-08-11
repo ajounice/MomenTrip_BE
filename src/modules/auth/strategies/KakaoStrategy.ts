@@ -1,9 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-kakao';
-import * as config from 'config';
-import { UserKakaoDto } from '@/modules/users/auth/dtos';
-
-//const kakaoConfig = config.get('kakao');
+import { UserKakaoDto } from '@/modules/auth/dtos';
 
 export class KakaoStrategy extends PassportStrategy(Strategy) {
     constructor() {
@@ -14,15 +11,11 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(accessToken: string, refreshToken: string, profile: any, done: any) {
-        console.log(accessToken);
-        console.log(refreshToken);
-        console.log(profile);
-
         const profileJson = profile._json;
         const kakao_account = profileJson.kakao_account;
         const payload: UserKakaoDto = {
-            nickname: kakao_account.profile.nickname,
-            kakaoId: profileJson.kakaoId,
+            name: kakao_account.profile.nickname,
+            nickname: profileJson.id,
             email:
                 kakao_account.has_email && !kakao_account.email_needs_agreement
                     ? kakao_account.email
