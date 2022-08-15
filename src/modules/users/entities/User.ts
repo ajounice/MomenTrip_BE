@@ -12,7 +12,7 @@ export class User {
     @Column({ unique: true, nullable: false })
     nickname!: string;
 
-    @Column({ unique: true, nullable: false })
+    @Column({ unique: true, nullable: true })
     email!: string;
 
     @Column({ nullable: false })
@@ -21,7 +21,7 @@ export class User {
     @Column({ nullable: false, default: false })
     type!: boolean;
 
-    @Column()
+    @Column({ nullable: true })
     image!: string;
 
     @OneToOne(() => UserStatistics, (statistics) => statistics.user, { onDelete: 'CASCADE' })

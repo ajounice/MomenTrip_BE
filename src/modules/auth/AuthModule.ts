@@ -9,6 +9,7 @@ import { PassportModule } from '@nestjs/passport';
 
 @Module({
     imports: [
+        PassportModule.register({ defaultStrategy: 'jwt' }),
         TypeOrmModule.forFeature([User]),
         JwtModule.register({
             secret: process.env.JWT_SECRET,

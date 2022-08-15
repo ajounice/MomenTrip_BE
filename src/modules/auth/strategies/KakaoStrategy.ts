@@ -6,7 +6,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
     constructor() {
         super({
             clientID: process.env.KAKAO_KEY,
-            callbackURL: process.env.KAKAPO_CALLBACK_URL,
+            callbackURL: process.env.KAKAO_CALLBACK_URL,
         });
     }
 
@@ -21,7 +21,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
                     ? kakao_account.email
                     : null,
             image:
-                kakao_account.profile_image_needs_agreement &&
+                !kakao_account.profile_image_needs_agreement &&
                 !kakao_account.profile.is_default_image
                     ? kakao_account.profile.profile_image_url
                     : null,

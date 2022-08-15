@@ -28,6 +28,7 @@ export class AuthService {
             await this.userRepository.save(user);
         }
         const payload = { id: user.id };
+        //유저 정보를 통해 토큰 값을 생성
         const accessToken = this.jwtService.sign(payload);
         console.log(accessToken);
         return { accessToken };

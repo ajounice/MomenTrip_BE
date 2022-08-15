@@ -5,6 +5,8 @@ import { UnauthorizedException } from '@nestjs/common';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
 
+require('dotenv').config();
+
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(
         @InjectRepository(User)
