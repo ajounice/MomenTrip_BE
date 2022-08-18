@@ -7,10 +7,7 @@ import { Wishlist } from '@/modules/wishlists/entities/Wishlist';
 @Entity({ name: 'users' })
 export class User {
     @PrimaryGeneratedColumn({ unsigned: true })
-    id!: number;
-
-    @Column({ unique: true, nullable: false })
-    nickname!: string;
+    id!: number; //kakao id
 
     @Column({ unique: true, nullable: true })
     email!: string;

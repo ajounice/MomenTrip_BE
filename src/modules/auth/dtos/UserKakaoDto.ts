@@ -1,9 +1,9 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UserKakaoDto {
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
-    nickname: string;
+    id: number;
 
     @IsOptional()
     @IsEmail()
