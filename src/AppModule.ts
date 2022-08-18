@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '@/modules/users/UserModule';
 import { FormModule } from '@/modules/forms/FormModule';
+import { TourInfoModule } from '@/modules/tourInfos/TourInfoModule';
 import { DatabaseConfigModule, DatabaseConfigService } from '@/config/database';
 import { TagModule } from '@/modules/tags/TagModule';
 import { ValidationPipe } from '@/common/pipes';
@@ -18,6 +19,7 @@ import { ValidationPipe } from '@/common/pipes';
         }),
         UserModule,
         FormModule,
+        TourInfoModule,
         TagModule,
     ],
     controllers: [],
