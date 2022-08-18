@@ -1,4 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Tag } from '@/modules/tags/entities/Tag';
+import { FormComment } from '@/modules/forms/entities/FormComment';
+import { FormLike } from '@/modules/forms/entities/FormLike';
 
 @Entity({ name: 'forms' })
 export class Form {
@@ -19,4 +22,24 @@ export class Form {
 
     @Column({ default: 0 })
     viewCount!: number;
+
+    @OneToMany(() => FormComment, (formComment) => formComment.form)
+    comments!: FormComment[];
+
+    @OneToMany(() => FormLike, (formLike) => formLike.form)
+    likes!: FormLike[];
+
+    @JoinTable({
+        name: 'forms_tags',
+        joinColumn: {
+            name: 'form_id',
+            referencedColumnName: 'id',
+        },
+        inverseJoinColumn: {
+            name: 'tag_id',
+            referencedColumnName: 'id',
+        },
+    })
+    @ManyToMany(() => Tag)
+    tags!: Tag[];
 }

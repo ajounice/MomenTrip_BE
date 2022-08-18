@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { Form, FormComment, FormLike } from '@/modules/forms/entities';
 import { TourInfo, TourInfoLike, TourInfoComment } from '@/modules/tourInfos/entities';
 import { User, UserStatistics, Badge, Following } from '@/modules/users/entities';
+import { Tag } from '@/modules/tags/entities/Tag';
 import { Wishlist } from '@/modules/wishlists/entities/Wishlist';
 
 @Injectable()
@@ -24,6 +25,7 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
             TourInfoLike,
             TourInfoComment,
             Wishlist,
+            Tag,
         ];
     }
 
@@ -39,6 +41,7 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
             namingStrategy: new SnakeNamingStrategy(),
             logging: this.configService.get<string>('NODE_ENV') !== 'production',
             synchronize: this.configService.get<string>('NODE_ENV') !== 'production',
+            legacySpatialSupport: false,
         };
     }
 }
