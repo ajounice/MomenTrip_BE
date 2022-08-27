@@ -1,12 +1,13 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-kakao';
 import { UserKakaoDto } from '@/modules/auth/dtos';
+import { ConfigService } from '@nestjs/config';
 
 export class KakaoStrategy extends PassportStrategy(Strategy) {
-    constructor() {
+    constructor(private readonly configService: ConfigService) {
         super({
-            clientID: process.env.KAKAO_KEY,
-            callbackURL: process.env.KAKAO_CALLBACK_URL,
+            clientID: configService.get<String>('KAKAO_KEY'),
+            callbackURL: configService.get<String>('KAKAO_CALLBACK_URL'),
         });
     }
 
