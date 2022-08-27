@@ -12,11 +12,10 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(accessToken: string, refreshToken: string, profile: any, done: any) {
-        const profileJson = profile._json;
-        const kakao_account = profileJson.kakao_account;
+        const { id, kakao_account } = profile._json;
         const payload: UserKakaoDto = {
             name: kakao_account.profile.nickname,
-            id: profileJson.id, //kakao id
+            id, //kakao id
             email:
                 kakao_account.has_email && !kakao_account.email_needs_agreement
                     ? kakao_account.email
