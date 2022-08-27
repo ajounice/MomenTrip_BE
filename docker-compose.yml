@@ -18,10 +18,11 @@ services:
     volumes:
       - mysql:/var/lib/mysql
     ports:
-      - 3306:3306
+      - "3306:3306"
 
 networks:
   default:
 
 volumes:
   mysql:
+
