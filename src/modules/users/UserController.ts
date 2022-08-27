@@ -1,13 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-
+import { Controller } from '@nestjs/common';
+import { UserService } from '@/modules/users/UserService';
 @Controller('users')
 export class UserController {
-    constructor(private readonly configService: ConfigService) {}
-
-    @Get('/')
-    test(): string {
-        console.log(this.configService.get<string>('DATABASE_HOST'));
-        return 'hehe';
-    }
+    constructor(private readonly userService: UserService) {}
 }
