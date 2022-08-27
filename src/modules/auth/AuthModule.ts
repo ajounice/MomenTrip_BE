@@ -4,18 +4,24 @@ import { JwtStrategy, KakaoStrategy } from './strategies';
 import { AuthController } from '@/modules/auth/AuthController';
 import { User } from '@/modules/users/entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
     imports: [
         PassportModule.register({ defaultStrategy: 'jwt' }),
         TypeOrmModule.forFeature([User]),
-        JwtModule.register({
-            secret: process.env.JWT_SECRET,
-            signOptions: {
-                expiresIn: '3600s',
-            },
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService): Promise<JwtModuleOptions> => ({
+                secret: configService.get<string>('JWT_SECRET'),
+                // secretOrPrivateKey: configService.get<string>('JWT_SECRET'),
+                signOptions: {
+                    expiresIn: '3600s',
+                },
+            }),
+            inject: [ConfigService],
         }),
         PassportModule.register({ defaultStrategy: 'jwt' }),
     ],
