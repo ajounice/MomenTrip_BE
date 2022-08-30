@@ -12,8 +12,14 @@ export class User {
     @Column({ unique: true, nullable: true })
     email!: string;
 
-    @Column({ nullable: false })
+    @Column({ unique: true, nullable: false })
+    nickname!: string;
+
+    @Column({ nullable: true })
     name!: string;
+
+    @Column({ nullable: true, default: null })
+    intro!: string;
 
     @Column({ nullable: false, default: false })
     type!: boolean;
