@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 // import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-//import { UserModule } from '@/modules/users/UserModule';
+import { UserModule } from '@/modules/users/UserModule';
 import { FormModule } from '@/modules/forms/FormModule';
 import { TourInfoModule } from '@/modules/tourInfos/TourInfoModule';
 import { DatabaseConfigModule, DatabaseConfigService } from '@/config/database';
@@ -18,7 +18,7 @@ import { TagModule } from '@/modules/tags/TagModule';
             useClass: DatabaseConfigService,
             inject: [DatabaseConfigService],
         }),
-        //ㅊUserModule,
+        UserModule,
         FormModule,
         TourInfoModule,
         TagModule,
