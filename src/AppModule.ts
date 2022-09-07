@@ -10,6 +10,7 @@ import { AuthModule } from '@/modules/auth/AuthModule';
 import { TagModule } from '@/modules/tags/TagModule';
 // import { ValidationPipe } from '@/common/pipes';
 import { LoggerMiddleware } from '@/common/middlewares';
+import { CommonModule } from '@/modules/common/CommonModule';
 
 @Module({
     imports: [
@@ -25,6 +26,7 @@ import { LoggerMiddleware } from '@/common/middlewares';
         TagModule,
         TourInfoModule,
         AuthModule,
+        CommonModule,
     ],
     controllers: [],
     providers: [
