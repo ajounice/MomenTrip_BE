@@ -1,18 +1,20 @@
 import { NotFoundException } from '@/common/exceptions';
-import { UpdateUserDto } from '@/modules/users/dto';
-import { Injectable } from '@nestjs/common';
+import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { CommonService } from '@/modules/common/CommonService';
 
 @Injectable()
 export class UserProfileService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        private readonly commonService: CommonService,
     ) {}
 
-    async show(id: number) {
+    async getUserProfile(id: number) {
         const user = this.userRepository.findOne({ where: { id } });
         if (!user) {
             throw new NotFoundException();
@@ -20,21 +22,21 @@ export class UserProfileService {
         return user;
     }
 
-    async update(id: number, updateUserDto: UpdateUserDto) {
-        const user = this.userRepository.findOne({ where: { id } });
-        console.log(updateUserDto.nickname);
-        /*if (user) {
-        await this.userRepository.save({
-            image: updateUserDto.image ?? '',
-            name: updateUserDto.name ?? '',
-            nickname: updateUserDto.nickname,
-            intro: updateUserDto.intro ?? '',
-        });
-  
-    }*/
-        console.log(user);
-        await this.userRepository.update(id, updateUserDto);
+    async createUserProfile(id: number, createUserInfoDto: CreateUserInfoDto) {
+        await this.userRepository.update(id, createUserInfoDto);
+        return this.getUserProfile(id);
+    }
 
-        return this.show(id);
+    async updateUserProfile(id: number, updateUserInfoDto: UpdateUserInfoDto) {
+        console.log(updateUserInfoDto.nickname);
+        await this.userRepository.update(id, updateUserInfoDto);
+        return this.getUserProfile(id);
+    }
+
+    async updateProfileImage(id: number, file: Express.Multer.File) {
+        const profileImage: string = await this.commonService.upload(file, 'images');
+        console.log({ profileImage });
+        await this.userRepository.update(id, { image: profileImage });
+        //return profileImage;
     }
 }

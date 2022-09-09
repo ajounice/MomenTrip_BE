@@ -1,6 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-kakao';
-import { UserKakaoDto } from '@/modules/auth/dtos';
+import { UserKakaoDto } from '@/modules/auth/dto';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 

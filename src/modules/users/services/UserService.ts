@@ -2,8 +2,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { UpdateUserDto } from '../dto';
-import { NotFoundException } from '@/common/exceptions';
 
 @Injectable()
 export class UserService {
@@ -11,12 +9,18 @@ export class UserService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
     ) {}
-
+    /*
     public findById(id: number): Promise<User> {
         return this.userRepository.findOne({ where: { id } });
+    }*/
+    //닉네임 중복 검사
+    findNickname(nickname: string) {
+        const user = this.userRepository.findOne({ where: { nickname } });
+        return user;
     }
 
-    async remove(id: number) {
+    //탈퇴
+    async deleteUser(id: number) {
         await this.userRepository.delete({ id: id });
     }
 }
