@@ -1,10 +1,24 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, StreamableFile } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Patch,
+    Post,
+    StreamableFile,
+    UploadedFile,
+    UseGuards,
+    UseInterceptors,
+} from '@nestjs/common';
 import { FormService } from '@/modules/forms/services/FormService';
 import { join } from 'path';
 import { createReadStream } from 'fs';
 import { BadRequestException, NotFoundException } from '@/common/exceptions';
 import { FormCommentService, FormLikeService } from '@/modules/forms/services';
 import { SaveFormCommentRequest, UpdateFormCommentRequest } from '@/modules/forms/dtos';
+import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('forms')
 export class FormController {
@@ -15,11 +29,29 @@ export class FormController {
     ) {}
 
     @Get('/')
+    @UseGuards(AuthGuard('jwt'))
     getAll() {
         return this.formService.getAll();
     }
 
+    @Post('/')
+    @UseGuards(AuthGuard('jwt'))
+    @UseInterceptors(FileInterceptor('video'))
+    async saveForm(@Body() body, @UploadedFile() video: Express.Multer.File) {
+        console.log(body);
+        console.log(video);
+
+        const createdForm = await this.formService.saveForm(body, video);
+
+        if (!createdForm) {
+            console.log('failed');
+        } else {
+            return 'success';
+        }
+    }
+
     @Get('/:id')
+    @UseGuards(AuthGuard('jwt'))
     async findById(@Param('id') id: number) {
         const form = await this.formService.findById(id);
         if (!form) {
@@ -29,6 +61,7 @@ export class FormController {
     }
 
     @Get('/:id/video')
+    @UseGuards(AuthGuard('jwt'))
     findVideoById(@Param('id') id: number): StreamableFile {
         const file = createReadStream(join(process.cwd(), '..', `test${id}.mp4`));
 
@@ -36,6 +69,7 @@ export class FormController {
     }
 
     @Post('/:id/like')
+    @UseGuards(AuthGuard('jwt'))
     async likeForm(@Param('id') id: number) {
         // TODO: 유저 세션 관련 작업이 완료된 후 해당 세션을 사용하도록 변경해야 함
         const user = { id: 1 };
@@ -50,11 +84,13 @@ export class FormController {
     }
 
     @Get('/:id/comments')
+    @UseGuards(AuthGuard('jwt'))
     async getCommentsByFormId(@Param('id') id: number) {
         return this.formCommentService.getCommentsByFormId(id);
     }
 
     @Post('/:id/comments')
+    @UseGuards(AuthGuard('jwt'))
     async saveCommentToForm(@Param('id') id: number, @Body() request: SaveFormCommentRequest) {
         // TODO: 유저 세션 관련 작업이 완료된 후 해당 세션을 사용하도록 변경해야 함
         const user = { id: 1 };
@@ -74,6 +110,7 @@ export class FormController {
     }
 
     @Patch('/comments/:commentId')
+    @UseGuards(AuthGuard('jwt'))
     async updateFormComment(
         @Param('commentId') commentId: number,
         @Body() request: UpdateFormCommentRequest,
@@ -95,6 +132,7 @@ export class FormController {
     }
 
     @Delete('/comments/:commentId')
+    @UseGuards(AuthGuard('jwt'))
     async deleteFormComment(@Param('commentId') commentId: number) {
         // TODO: 유저 세션 관련 작업이 완료된 후 해당 세션을 사용하도록 변경해야 함
         const user = { id: 1 };

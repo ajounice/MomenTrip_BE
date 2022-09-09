@@ -2,6 +2,7 @@ import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColum
 import { Tag } from '@/modules/tags/entities/Tag';
 import { TourInfoComment } from '@/modules/tourInfos/entities/TourInfoComment';
 import { TourInfoLike } from '@/modules/tourInfos/entities/TourInfoLike';
+import { Form } from '@/modules/forms/entities';
 
 export enum placeType {
     CITY = 'CITY',
@@ -48,4 +49,7 @@ export class TourInfo {
     })
     @ManyToMany(() => Tag)
     tags!: Tag[];
+
+    @OneToMany(() => Form, (form) => form.tourInfo)
+    tourInfos!: TourInfo[];
 }

@@ -1,7 +1,16 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinTable,
+    ManyToMany,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Tag } from '@/modules/tags/entities/Tag';
 import { FormComment } from '@/modules/forms/entities/FormComment';
 import { FormLike } from '@/modules/forms/entities/FormLike';
+import { TourInfo } from '@/modules/tourInfos/entities';
 
 @Entity({ name: 'forms' })
 export class Form {
@@ -42,4 +51,7 @@ export class Form {
     })
     @ManyToMany(() => Tag)
     tags!: Tag[];
+
+    @ManyToOne(() => TourInfo)
+    tourInfo!: TourInfo;
 }
