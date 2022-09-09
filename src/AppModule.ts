@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
 // import { APP_PIPE } from '@nestjs/core';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '@/modules/users/UserModule';
@@ -9,6 +9,8 @@ import { DatabaseConfigModule, DatabaseConfigService } from '@/config/database';
 import { AuthModule } from '@/modules/auth/AuthModule';
 import { TagModule } from '@/modules/tags/TagModule';
 // import { ValidationPipe } from '@/common/pipes';
+import { LoggerMiddleware } from '@/common/middlewares';
+import { CommonModule } from '@/modules/common/CommonModule';
 
 @Module({
     imports: [
@@ -24,6 +26,7 @@ import { TagModule } from '@/modules/tags/TagModule';
         TagModule,
         TourInfoModule,
         AuthModule,
+        CommonModule,
     ],
     controllers: [],
     providers: [
@@ -33,4 +36,8 @@ import { TagModule } from '@/modules/tags/TagModule';
         // },
     ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer): any {
+        consumer.apply(LoggerMiddleware).forRoutes('*');
+    }
+}
