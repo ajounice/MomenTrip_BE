@@ -80,7 +80,7 @@ export class TourInfoService {
         );
 
         const openAPIItems = this.filterOpenAPIItem(
-            openAPISearchResult.data.response.body.items.item,
+            openAPISearchResult?.data?.response?.body?.items?.item,
             document.place_name,
         );
 
@@ -89,7 +89,7 @@ export class TourInfoService {
             .insert()
             .values({
                 name: site,
-                image: openAPIItems[0].firstimage,
+                image: openAPIItems.length ? openAPIItems[0].firstimage : '',
                 place: () => `ST_GeomFromText('POINT(${document.x} ${document.y})')`,
             })
             .execute();
@@ -98,6 +98,9 @@ export class TourInfoService {
     }
 
     private filterOpenAPIItem = (data, site) => {
+        if (!data) {
+            return [];
+        }
         return data.filter((v) => v.title.includes(site));
     };
 }
