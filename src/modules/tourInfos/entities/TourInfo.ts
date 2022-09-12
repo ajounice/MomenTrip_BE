@@ -1,27 +1,22 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Point } from 'wkx';
 import { Tag } from '@/modules/tags/entities/Tag';
 import { TourInfoComment } from '@/modules/tourInfos/entities/TourInfoComment';
 import { TourInfoLike } from '@/modules/tourInfos/entities/TourInfoLike';
-
-export enum placeType {
-    CITY = 'CITY',
-    MOUNTAIN = 'MOUNTAIN',
-    SEA = 'SEA',
-}
 
 @Entity({ name: 'tour_infos' })
 export class TourInfo {
     @PrimaryGeneratedColumn({ unsigned: true })
     id!: number;
 
-    @Column({ type: 'enum', enum: placeType })
-    type!: string;
-
     @Column({ nullable: false })
     name!: string;
 
     @Column({ type: 'point' })
-    place!: any;
+    place!: Point;
+
+    @Column({ nullable: true })
+    image!: string;
 
     @Column({ default: 0 })
     price!: number;
