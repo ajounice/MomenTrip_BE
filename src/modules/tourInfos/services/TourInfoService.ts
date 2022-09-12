@@ -94,7 +94,7 @@ export class TourInfoService {
             })
             .execute();
 
-        return this.tourInfoRepository.find({ where: { id: result.identifiers[0].id } });
+        return this.tourInfoRepository.findOne({ where: { id: result.identifiers[0].id } });
     }
 
     private filterOpenAPIItem = (data, site) => {

@@ -7,6 +7,7 @@ import { CommonService } from '@/modules/common/CommonService';
 import { TourInfoService } from '@/modules/tourInfos/services';
 import { SaveFormRequest } from '@/modules/forms/dtos';
 import { BadRequestException } from '@/common/exceptions';
+import { User } from '@/modules/users/entities';
 
 @Injectable()
 export class FormService {
@@ -19,14 +20,14 @@ export class FormService {
     ) {}
 
     public getAll(): Promise<Form[]> {
-        return this.formRepository.find();
+        return this.formRepository.find({ relations: ['tags'] });
     }
 
     public findById(id: number): Promise<Form> {
         return this.formRepository.findOne({ where: { id } });
     }
 
-    public async saveForm(body: SaveFormRequest, video: Express.Multer.File) {
+    public async saveForm(body: SaveFormRequest, video: Express.Multer.File, user: User) {
         const entity = body.toEntity();
 
         const path = await this.commonService.upload(video, 'videos');
@@ -44,7 +45,21 @@ export class FormService {
             entity.tourInfo = info;
         }
 
+        entity.tags = [];
+
+        const tags = body.tag.split(',');
+
+        if (tags.length) {
+            for (const tag of tags) {
+                const tagEntity = await this.tagService.saveTag(tag);
+
+                entity.tags.push(tagEntity);
+            }
+        }
+
         entity.video = path;
+
+        entity.user = user;
 
         return this.formRepository.save(entity);
     }
