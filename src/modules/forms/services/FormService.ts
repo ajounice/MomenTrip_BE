@@ -20,7 +20,7 @@ export class FormService {
     ) {}
 
     public getAll(): Promise<Form[]> {
-        return this.formRepository.find({ relations: ['tags'] });
+        return this.formRepository.find({ relations: ['tags', 'user'] });
     }
 
     public findById(id: number): Promise<Form> {
