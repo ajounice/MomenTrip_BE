@@ -10,8 +10,8 @@ export class UserKakaoDto {
     email: string | null;
 
     @IsString()
-    @IsNotEmpty()
-    name: string;
+    @IsOptional()
+    name: string | null;
 
     @IsString()
     @IsNotEmpty()
