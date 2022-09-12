@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
-import { UserKakaoDto } from '@/modules/auth/dtos';
+import { UserKakaoDto } from '@/modules/auth/dto';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -30,8 +30,7 @@ export class AuthService {
         const payload = { id: user.id };
         //유저 정보를 통해 토큰 값을 생성
         const accessToken = this.jwtService.sign(payload);
-        console.log(accessToken);
-        console.log(user.id, user.name, user.email, user.image);
+        console.log(accessToken, { user });
         return { accessToken };
     }
 }
