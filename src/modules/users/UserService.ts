@@ -9,4 +9,12 @@ export class UserService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
     ) {}
+
+    public filterByNickname(text: string) {
+        return this.userRepository
+            .createQueryBuilder('user')
+            .select()
+            .where(`user.nickname like :text`, { text: `%${text}%` })
+            .getMany();
+    }
 }
