@@ -45,7 +45,7 @@ export class TourInfoService {
         return this.tourInfoRepository.find();
     }
 
-    public findById(id): Promise<TourInfo> {
+    public findById(id: number): Promise<TourInfo> {
         return this.tourInfoRepository.findOne({ where: { id } });
     }
 
