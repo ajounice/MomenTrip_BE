@@ -3,8 +3,9 @@ import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CommonService } from '@/modules/common/CommonService';
+import { UserService } from '@/modules/users/services/UserService';
 
 @Injectable()
 export class UserProfileService {
@@ -12,6 +13,7 @@ export class UserProfileService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         private readonly commonService: CommonService,
+        private readonly userService: UserService,
     ) {}
 
     async getUserProfile(id: number) {
@@ -23,14 +25,24 @@ export class UserProfileService {
     }
 
     async createUserProfile(id: number, createUserInfoDto: CreateUserInfoDto) {
-        await this.userRepository.update(id, createUserInfoDto);
-        return this.getUserProfile(id);
+        const isDuplicated = await this.userService.findNickname(createUserInfoDto.nickname);
+        if (isDuplicated) {
+            console.log('duplicated nickname');
+            throw new BadRequestException();
+        } else {
+            await this.userRepository.update(id, createUserInfoDto);
+            return this.getUserProfile(id);
+        }
     }
 
     async updateUserProfile(id: number, updateUserInfoDto: UpdateUserInfoDto) {
-        console.log(updateUserInfoDto.nickname);
-        await this.userRepository.update(id, updateUserInfoDto);
-        return this.getUserProfile(id);
+        const isDuplicated = await this.userService.findNickname(updateUserInfoDto.nickname);
+        if (isDuplicated) {
+            throw new BadRequestException();
+        } else {
+            await this.userRepository.update(id, updateUserInfoDto);
+            return this.getUserProfile(id);
+        }
     }
 
     async updateProfileImage(id: number, file: Express.Multer.File) {

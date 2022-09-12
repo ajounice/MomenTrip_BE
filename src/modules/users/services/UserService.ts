@@ -9,14 +9,14 @@ export class UserService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
     ) {}
-    /*
-    public findById(id: number): Promise<User> {
-        return this.userRepository.findOne({ where: { id } });
-    }*/
+
     //닉네임 중복 검사
-    findNickname(nickname: string) {
-        const user = this.userRepository.findOne({ where: { nickname } });
-        return user;
+    async findNickname(nickname: string): Promise<boolean> {
+        const count = await this.userRepository.count({ where: { nickname: nickname } });
+        if (count) {
+            return true;
+        }
+        return false;
     }
 
     //탈퇴
