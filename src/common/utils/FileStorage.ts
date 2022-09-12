@@ -29,7 +29,9 @@ export class FileStorage {
                 })
                 .promise();
 
-            console.log(result.$response);
+            if (result.$response.err) {
+                console.log(result.$response);
+            }
 
             const fullURL = `${this.configService.get<string>('AWS_BUCKET_URL')}${key}`;
 
