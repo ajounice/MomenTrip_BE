@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from '@/modules/users/entities';
+import { WishlistFolder } from '@/modules/wishlists/entities/WishlistFolder';
 
 export enum wishType {
     TOUR = 'TOUR',
@@ -17,6 +17,6 @@ export class Wishlist {
     @Column({ unsigned: true })
     targetId!: number;
 
-    @ManyToOne(() => User, (user) => user.wishlists)
-    user!: User;
+    @ManyToOne(() => WishlistFolder, (wishlistFolder) => wishlistFolder.id)
+    wishlistFolder!: WishlistFolder;
 }

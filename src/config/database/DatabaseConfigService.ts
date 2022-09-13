@@ -7,6 +7,7 @@ import { TourInfo, TourInfoLike, TourInfoComment } from '@/modules/tourInfos/ent
 import { User, UserStatistics, Badge, Following } from '@/modules/users/entities';
 import { Tag } from '@/modules/tags/entities/Tag';
 import { Wishlist } from '@/modules/wishlists/entities/Wishlist';
+import { WishlistFolder } from "@/modules/wishlists/entities";
 
 @Injectable()
 export class DatabaseConfigService implements TypeOrmOptionsFactory {
@@ -25,6 +26,7 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
             TourInfoLike,
             TourInfoComment,
             Wishlist,
+            WishlistFolder,
             Tag,
         ];
     }
