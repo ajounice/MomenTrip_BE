@@ -39,7 +39,6 @@ export class User {
     @OneToMany(() => Following, (following) => following.following)
     followings!: Following[];
 
-
     @OneToMany(() => WishlistFolder, (wishlistFolder) => wishlistFolder.user, {
         onDelete: 'CASCADE',
     })

@@ -14,12 +14,12 @@ export class WishlistFolder {
     user!: User;
 
     @OneToMany(() => Wishlist, (wishlist) => wishlist.wishlistFolder)
-    wishlists?: Wishlist[];
+    wishlists!: Wishlist[];
 
-    static from(userId: number) {
+    static from(userId: number): WishlistFolder {
         const folder = new WishlistFolder();
-        folder.user = new User();
 
+        folder.user = new User();
         folder.user.id = userId;
 
         return folder;

@@ -17,6 +17,15 @@ export class Wishlist {
     @Column({ unsigned: true })
     targetId!: number;
 
-    @ManyToOne(() => WishlistFolder, (wishlistFolder) => wishlistFolder.id)
+    @ManyToOne(() => WishlistFolder)
     wishlistFolder!: WishlistFolder;
+
+    static from(folderId: number): Wishlist {
+        const wishlist = new Wishlist();
+
+        wishlist.wishlistFolder = new WishlistFolder();
+        wishlist.wishlistFolder.id = folderId;
+
+        return wishlist;
+    }
 }
