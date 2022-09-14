@@ -8,7 +8,6 @@ import {
     Post,
     Put,
     Req,
-    Res,
     UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -40,7 +39,7 @@ export class WishlistController {
     }
 
     @Delete('/:id')
-    async deleteFolder(@Req() req, @Req() res, @Param('id') folderId: number) {
+    async deleteFolder(@Req() req, @Param('id') folderId: number) {
         await this.wishlistFolderService.deleteFolder(req.user.id, folderId);
     }
 
@@ -87,6 +86,5 @@ export class WishlistController {
             throw new BadRequestException();
         }
         return deletedWishlist;
-        //return re-s.redirect('/wishlists/' + folderId);
     }
 }
