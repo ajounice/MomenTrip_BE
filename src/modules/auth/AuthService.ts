@@ -41,20 +41,20 @@ export class AuthService {
             where: { email: email },
         });
         if (!user || (user && !compare(password, user.password))) {
-            //throw new BadRequestException();
             return null;
         }
         return user;
     }
 
-    async localLogin(userLocalDto: UserLocalDto): Promise<{ accessToken: string }> {
-        const { email, password } = userLocalDto;
+    async localLogin(userData: User): Promise<{ accessToken: string }> {
+        const { email, password } = userData;
         const user = await this.userRepository.findOne({
             where: { email: email },
         });
-        if (!user) {
+        if (!user || (user && !compare(password, user.password))) {
             throw new BadRequestException();
         }
+        //console.log('local login service', user);
         const payload = { id: user.id };
         const accessToken = this.jwtService.sign(payload);
         return { accessToken };
@@ -62,10 +62,15 @@ export class AuthService {
 
     async createUser(createUserDto: CreateUserDto): Promise<User> {
         const { email, password } = createUserDto;
-        const user = this.userRepository.create({
-            email,
-            password,
+        const user = await this.userRepository.count({
+            where: { email: email },
         });
-        return await this.userRepository.save(user);
+        if (!user) {
+            const user = this.userRepository.create({
+                email,
+                password,
+            });
+            return await this.userRepository.save(user);
+        }
     }
 }

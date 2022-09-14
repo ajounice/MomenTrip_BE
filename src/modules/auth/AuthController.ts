@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post, Redirect, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './AuthService';
 import { CreateUserDto, UserKakaoDto, UserLocalDto } from '@/modules/auth/dto';
+import { User } from '@/modules/users/entities';
 
 @Controller('auth')
 export class AuthController {
@@ -19,16 +20,17 @@ export class AuthController {
         return this.authService.kakaoLogin(req.user as UserKakaoDto);
     }
 
+    //로컬 로그인
     @Post('/login')
     @UseGuards(AuthGuard('local'))
     async localLogin(@Req() req): Promise<{ accessToken: string }> {
         console.log('local login controller', req.user);
-        return this.authService.localLogin(req.user as UserLocalDto);
+        return this.authService.localLogin(req.user);
     }
 
-    //로컬 로그인(유저생성)
+    //로컬 회원가입(유저생성)
     @Post('/signup')
-    async create(@Body() createUserDto: CreateUserDto) {
+    async create(@Body() createUserDto: CreateUserDto): Promise<User> {
         return await this.authService.createUser(createUserDto);
     }
 }
