@@ -73,7 +73,6 @@ export class WishlistController {
     @Delete('/:folderId/:wishId')
     async deleteWishlist(
         @Req() req,
-        @Res() res,
         @Param('folderId') folderId: number,
         @Param('wishId') wishId: number,
     ) {
