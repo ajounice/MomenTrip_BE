@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
-import { UserKakaoDto, UserLocalDto } from '@/modules/auth/dto';
+import { CreateUserDto, UserKakaoDto, UserLocalDto } from '@/modules/auth/dto';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { BadRequestException } from '@/common/exceptions';
@@ -41,25 +41,31 @@ export class AuthService {
             where: { email: email },
         });
         if (!user || (user && !compare(password, user.password))) {
-            throw new BadRequestException();
+            //throw new BadRequestException();
+            return null;
         }
         return user;
     }
 
     async localLogin(userLocalDto: UserLocalDto): Promise<{ accessToken: string }> {
         const { email, password } = userLocalDto;
-        let user = await this.userRepository.findOne({
+        const user = await this.userRepository.findOne({
             where: { email: email },
         });
         if (!user) {
-            user = this.userRepository.create({
-                email,
-                password,
-            });
-            await this.userRepository.save(user);
+            throw new BadRequestException();
         }
         const payload = { id: user.id };
         const accessToken = this.jwtService.sign(payload);
         return { accessToken };
+    }
+
+    async createUser(createUserDto: CreateUserDto): Promise<User> {
+        const { email, password } = createUserDto;
+        const user = this.userRepository.create({
+            email,
+            password,
+        });
+        return await this.userRepository.save(user);
     }
 }

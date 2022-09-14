@@ -4,13 +4,13 @@ import {
     Controller,
     Delete,
     Get,
-    Patch,
+    Patch, Post,
     Req,
     Res,
     UploadedFile,
     UseGuards,
-    UseInterceptors,
-} from '@nestjs/common';
+    UseInterceptors
+} from "@nestjs/common";
 import { UserService } from '@/modules/users/services/UserService';
 import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
 import { UserProfileService } from '@/modules/users/services';
@@ -26,12 +26,15 @@ export class UserController {
         private readonly userProfileService: UserProfileService,
     ) {}
 
+    @Get('/')
+    findAll(){
+        return this.userService.findAllUser();
+    }
     //닉네임 중복 검사
     @Get('/:nickname/duplicate' || '/:id/duplicate')
     async checkNickname(@Body() nickname: string) {
         return await this.userService.findNickname(nickname);
     }
-
     //첫 로그인 이후 추가 정보 입력(닉네임, 소개글 등)
     @Patch('/:id')
     async createUserProfile(
