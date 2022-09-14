@@ -1,8 +1,9 @@
 import { WishlistFolder } from '@/modules/wishlists/entities';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class CreateWishlistFolderRequest {
     @IsNotEmpty()
+    @IsString()
     name!: string;
 
     toEntity(userId: number): WishlistFolder {

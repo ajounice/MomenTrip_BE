@@ -20,7 +20,7 @@ export class WishlistFolderService {
     async checkUser(userId: number, folderId: number) {
         const user = await this.wishlistFolderRepository.count({
             where: { id: folderId, user: { id: userId } },
-            relations: ['user'],
+            //relations: ['user'],
         });
         if (user) {
             //유저의 wishlist folder가 맞을 시
@@ -32,7 +32,7 @@ export class WishlistFolderService {
     getAllFolder(userId: number): Promise<WishlistFolder[]> {
         return this.wishlistFolderRepository.find({
             where: { user: { id: userId } },
-            relations: ['user'],
+            relations: ['wishlists'],
         });
     }
 
@@ -42,10 +42,6 @@ export class WishlistFolderService {
     }
 
     async deleteFolder(userId: number, folderId: number) {
-        const isUser = this.checkUser(userId, folderId);
-        if (!isUser) {
-            throw new ForbiddenException();
-        }
         const folder = await this.wishlistFolderRepository.findOne({
             where: { user: { id: userId }, id: folderId },
             relations: ['user'],
@@ -78,24 +74,23 @@ export class WishlistFolderService {
         if (!isUser) {
             throw new ForbiddenException();
         }
-
         return this.wishlistRepository.find({
             where: { wishlistFolder: { id: folderId } },
-            relations: ['wishlistFolder'],
+            //relations: ['wishlistFolder'],
         });
     }
 
-    async deleteWishlist(userId: number, folderId: number, formId: number) {
-        const isUser = this.checkUser(userId, folderId);
+    async deleteWishlist(userId: number, folderId: number, wishId: number) {
+        /*const isUser = await this.checkUser(userId, folderId);
         if (!isUser) {
             throw new ForbiddenException();
-        }
+        }*/
 
         const wishlist = await this.wishlistRepository.findOne({
-            where: { id: formId, wishlistFolder: { id: folderId } },
+            where: { id: wishId, wishlistFolder: { id: folderId } },
             relations: ['wishlistFolder'],
         });
-
+        console.log(wishlist);
         if (!wishlist) {
             throw new NotFoundException();
         }

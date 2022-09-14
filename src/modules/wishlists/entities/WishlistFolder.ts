@@ -13,7 +13,7 @@ export class WishlistFolder {
     @ManyToOne(() => User)
     user!: User;
 
-    @OneToMany(() => Wishlist, (wishlist) => wishlist.wishlistFolder)
+    @OneToMany(() => Wishlist, (wishlist) => wishlist.wishlistFolder, { onDelete: 'CASCADE' })
     wishlists!: Wishlist[];
 
     static from(userId: number): WishlistFolder {

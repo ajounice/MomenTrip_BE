@@ -14,6 +14,7 @@ export class UpdateWishlistRequest {
     @IsNumber()
     @IsNotEmpty()
     targetId!: number;
+
     toEntity(folderId: number): Wishlist {
         const wishlist = Wishlist.from(folderId);
 

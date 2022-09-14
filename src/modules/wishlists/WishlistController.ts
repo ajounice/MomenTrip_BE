@@ -19,9 +19,7 @@ import { Wishlist } from '@/modules/wishlists/entities';
 @UseGuards(AuthGuard('jwt'))
 @Controller('wishlists')
 export class WishlistController {
-    constructor(
-        private readonly wishlistFolderService: WishlistFolderService,
-    ) {}
+    constructor(private readonly wishlistFolderService: WishlistFolderService) {}
 
     @Get('/')
     getAllFolder(@Req() req) {
@@ -72,22 +70,23 @@ export class WishlistController {
         return folder;
     }
 
-    @Delete('/:folderId/:formId')
+    @Delete('/:folderId/:wishId')
     async deleteWishlist(
         @Req() req,
         @Res() res,
         @Param('folderId') folderId: number,
-        @Param('formId') formId: number,
+        @Param('wishId') wishId: number,
     ) {
         const deletedWishlist = await this.wishlistFolderService.deleteWishlist(
             req.user.id,
             folderId,
-            formId,
+            wishId,
         );
-        /*
+        console.log(deletedWishlist);
+
         if (!deletedWishlist) {
             throw new BadRequestException();
-        }*/
+        }
         return deletedWishlist;
         //return re-s.redirect('/wishlists/' + folderId);
     }
