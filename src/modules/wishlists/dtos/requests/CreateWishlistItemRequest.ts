@@ -1,15 +1,14 @@
-import { WishlistItem } from '@/modules/wishlists/entities';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { WishlistItem, WishType } from '@/modules/wishlists/entities';
+import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
 //import { ValidateNested } from 'class-validator';
-//import { Type } from 'class-transformer';
 
 export class CreateWishlistItemRequest {
     //@ValidateNested()
     //@Type(() => WishlistItem)
     //wishlist!: WishlistItem;
-    @IsString()
+    @IsEnum(WishType)
     @IsNotEmpty()
-    type!: string;
+    type!: WishType;
 
     @IsNumber()
     @IsNotEmpty()

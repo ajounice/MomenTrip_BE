@@ -17,7 +17,7 @@ export class WishlistFolderService {
         private readonly wishlistRepository: Repository<WishlistItem>,
     ) {}
 
-    async checkUser(userId: number, folderId: number) {
+    public async checkUser(userId: number, folderId: number) {
         const user = await this.wishlistFolderRepository.count({
             where: { id: folderId, user: { id: userId } },
             //relations: ['user'],
@@ -56,8 +56,8 @@ export class WishlistFolderService {
         }*/
         return this.wishlistFolderRepository.remove(folder);
     }
-
-    async updateWishlist(userId: number, folderId: number, request: CreateWishlistItemRequest) {
+    /*
+    async createWishlistItem(userId: number, folderId: number, request: CreateWishlistItemRequest) {
         const isUser = this.checkUser(userId, folderId);
         if (!isUser) {
             throw new ForbiddenException();
@@ -67,7 +67,7 @@ export class WishlistFolderService {
         return await this.wishlistRepository.save(wishlist);
         //folder.wishlists.push(wishlist);
         //return this.wishlistFolderRepository.update(folderId, folder);
-    }
+    }*/
 
     getAllWishlist(userId: number, folderId: number): Promise<WishlistItem[]> {
         const isUser = this.checkUser(userId, folderId);

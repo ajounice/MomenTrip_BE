@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { WishlistFolder } from '@/modules/wishlists/entities/WishlistFolder';
 
-export enum wishType {
+export enum WishType {
     TOUR = 'TOUR',
     FORM = 'FORM',
 }
@@ -11,7 +11,7 @@ export class WishlistItem {
     @PrimaryGeneratedColumn({ unsigned: true })
     id!: number;
 
-    @Column({ type: 'enum', enum: wishType })
+    @Column({ type: 'enum', enum: WishType })
     type!: string;
 
     @Column({ unsigned: true })
@@ -21,11 +21,11 @@ export class WishlistItem {
     wishlistFolder!: WishlistFolder;
 
     static from(folderId: number): WishlistItem {
-        const wishlist = new WishlistItem();
+        const item = new WishlistItem();
 
-        wishlist.wishlistFolder = new WishlistFolder();
-        wishlist.wishlistFolder.id = folderId;
+        item.wishlistFolder = new WishlistFolder();
+        item.wishlistFolder.id = folderId;
 
-        return wishlist;
+        return item;
     }
 }

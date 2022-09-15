@@ -11,14 +11,17 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { WishlistFolderService } from '@/modules/wishlists/services';
+import { WishlistFolderService, WishlistItemService } from '@/modules/wishlists/services';
 import { CreateWishlistFolderRequest, CreateWishlistItemRequest } from '@/modules/wishlists/dtos';
 import { WishlistItem } from '@/modules/wishlists/entities';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('wishlists')
 export class WishlistController {
-    constructor(private readonly wishlistFolderService: WishlistFolderService) {}
+    constructor(
+        private readonly wishlistFolderService: WishlistFolderService,
+        private readonly wishlistItemService: WishlistItemService,
+    ) {}
 
     @Get('/')
     getAllFolder(@Req() req) {
@@ -58,7 +61,7 @@ export class WishlistController {
         request = new CreateWishlistItemRequest();
         request = item;
 
-        const folder = await this.wishlistFolderService.updateWishlist(
+        const folder = await this.wishlistItemService.createWishlistItem(
             req.user.id,
             folderId,
             request,
@@ -86,5 +89,19 @@ export class WishlistController {
             throw new BadRequestException();
         }
         return deletedWishlist;
+    }
+
+    //해당 폼으로 이동(FORM/TOUR)
+    @Get('/:folderId/:wishId')
+    async getWishlistItem(
+        @Req() req,
+        @Param('folderId') folderId: number,
+        @Param('wishId') wishId: number,
+    ) {
+        const item = await this.wishlistItemService.getWishlistItem(req.user.id, folderId, wishId);
+        if (!item) {
+            throw new BadRequestException();
+        }
+        return item;
     }
 }

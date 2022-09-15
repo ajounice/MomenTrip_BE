@@ -8,5 +8,6 @@ import { TourInfo, TourInfoComment, TourInfoLike } from '@/modules/tourInfos/ent
     imports: [TypeOrmModule.forFeature([TourInfo, TourInfoLike, TourInfoComment])],
     controllers: [TourInfoController],
     providers: [TourInfoService, TourInfoLikeService, TourInfoCommentService],
+    exports: [TourInfoService, TourInfoLikeService, TourInfoCommentService, TypeOrmModule],
 })
 export class TourInfoModule {}
