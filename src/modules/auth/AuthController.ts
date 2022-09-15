@@ -24,7 +24,7 @@ export class AuthController {
     @Post('/login')
     @UseGuards(AuthGuard('local'))
     async localLogin(@Req() req): Promise<{ accessToken: string }> {
-        console.log('local login controller', req.user);
+        //console.log('local login controller', req.user);
         return this.authService.localLogin(req.user);
     }
 

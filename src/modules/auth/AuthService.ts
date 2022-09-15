@@ -37,20 +37,23 @@ export class AuthService {
 
     async validateUser(userLocalDto: UserLocalDto): Promise<User> {
         const { email, password } = userLocalDto;
+        //console.log('validateUser service', email, password);
         const user = await this.userRepository.findOne({
             where: { email: email },
         });
-        if (!user || (user && !compare(password, user.password))) {
+        //console.log(user);
+        if (!user) {
             return null;
         }
         return user;
     }
 
-    async localLogin(userData: User): Promise<{ accessToken: string }> {
-        const { email, password } = userData;
+    async localLogin(userLocalDto: UserLocalDto): Promise<{ accessToken: string }> {
+        const { email, password } = userLocalDto;
         const user = await this.userRepository.findOne({
             where: { email: email },
         });
+        //console.log('locallogin service ', user);
         if (!user || (user && !compare(password, user.password))) {
             throw new BadRequestException();
         }
