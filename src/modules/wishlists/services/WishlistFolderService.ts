@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Wishlist, WishlistFolder } from '@/modules/wishlists/entities';
+import { WishlistItem, WishlistFolder } from '@/modules/wishlists/entities';
 import { Repository } from 'typeorm';
 import {
     CreateWishlistFolderRequest,
-    UpdateWishlistRequest,
+    CreateWishlistItemRequest,
 } from '@/modules/wishlists/dtos/requests';
 import { ForbiddenException, NotFoundException } from '@/common/exceptions';
 
@@ -13,8 +13,8 @@ export class WishlistFolderService {
     constructor(
         @InjectRepository(WishlistFolder)
         private readonly wishlistFolderRepository: Repository<WishlistFolder>,
-        @InjectRepository(Wishlist)
-        private readonly wishlistRepository: Repository<Wishlist>,
+        @InjectRepository(WishlistItem)
+        private readonly wishlistRepository: Repository<WishlistItem>,
     ) {}
 
     async checkUser(userId: number, folderId: number) {
@@ -57,7 +57,7 @@ export class WishlistFolderService {
         return this.wishlistFolderRepository.remove(folder);
     }
 
-    async updateWishlist(userId: number, folderId: number, request: UpdateWishlistRequest) {
+    async updateWishlist(userId: number, folderId: number, request: CreateWishlistItemRequest) {
         const isUser = this.checkUser(userId, folderId);
         if (!isUser) {
             throw new ForbiddenException();
@@ -69,7 +69,7 @@ export class WishlistFolderService {
         //return this.wishlistFolderRepository.update(folderId, folder);
     }
 
-    getAllWishlist(userId: number, folderId: number): Promise<Wishlist[]> {
+    getAllWishlist(userId: number, folderId: number): Promise<WishlistItem[]> {
         const isUser = this.checkUser(userId, folderId);
         if (!isUser) {
             throw new ForbiddenException();

@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '@/modules/users/entities';
-import { Wishlist } from '@/modules/wishlists/entities/Wishlist';
+import { WishlistItem } from '@/modules/wishlists/entities/WishlistItem';
 
 @Entity({ name: 'wishlist_folders' })
 export class WishlistFolder {
@@ -13,8 +13,8 @@ export class WishlistFolder {
     @ManyToOne(() => User)
     user!: User;
 
-    @OneToMany(() => Wishlist, (wishlist) => wishlist.wishlistFolder, { onDelete: 'CASCADE' })
-    wishlists!: Wishlist[];
+    @OneToMany(() => WishlistItem, (wishlist) => wishlist.wishlistFolder, { onDelete: 'CASCADE' })
+    wishlists!: WishlistItem[];
 
     static from(userId: number): WishlistFolder {
         const folder = new WishlistFolder();

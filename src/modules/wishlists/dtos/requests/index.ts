@@ -1,2 +1,2 @@
 export * from './CreateWishlistFolderRequest';
-export * from './UpdateWishlistRequest';
+export * from './CreateWishlistItemRequest';

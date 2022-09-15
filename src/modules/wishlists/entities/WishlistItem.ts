@@ -7,7 +7,7 @@ export enum wishType {
 }
 
 @Entity({ name: 'wishlists' })
-export class Wishlist {
+export class WishlistItem {
     @PrimaryGeneratedColumn({ unsigned: true })
     id!: number;
 
@@ -20,8 +20,8 @@ export class Wishlist {
     @ManyToOne(() => WishlistFolder)
     wishlistFolder!: WishlistFolder;
 
-    static from(folderId: number): Wishlist {
-        const wishlist = new Wishlist();
+    static from(folderId: number): WishlistItem {
+        const wishlist = new WishlistItem();
 
         wishlist.wishlistFolder = new WishlistFolder();
         wishlist.wishlistFolder.id = folderId;

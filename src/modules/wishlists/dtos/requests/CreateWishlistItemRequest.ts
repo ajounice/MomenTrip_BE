@@ -1,12 +1,12 @@
-import { Wishlist } from '@/modules/wishlists/entities';
+import { WishlistItem } from '@/modules/wishlists/entities';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 //import { ValidateNested } from 'class-validator';
 //import { Type } from 'class-transformer';
 
-export class UpdateWishlistRequest {
+export class CreateWishlistItemRequest {
     //@ValidateNested()
-    //@Type(() => Wishlist)
-    //wishlist!: Wishlist;
+    //@Type(() => WishlistItem)
+    //wishlist!: WishlistItem;
     @IsString()
     @IsNotEmpty()
     type!: string;
@@ -15,8 +15,8 @@ export class UpdateWishlistRequest {
     @IsNotEmpty()
     targetId!: number;
 
-    toEntity(folderId: number): Wishlist {
-        const wishlist = Wishlist.from(folderId);
+    toEntity(folderId: number): WishlistItem {
+        const wishlist = WishlistItem.from(folderId);
 
         wishlist.type = this.type;
         wishlist.targetId = this.targetId;

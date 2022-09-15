@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { WishlistFolderService } from '@/modules/wishlists/services';
-import { CreateWishlistFolderRequest, UpdateWishlistRequest } from '@/modules/wishlists/dtos';
-import { Wishlist } from '@/modules/wishlists/entities';
+import { CreateWishlistFolderRequest, CreateWishlistItemRequest } from '@/modules/wishlists/dtos';
+import { WishlistItem } from '@/modules/wishlists/entities';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('wishlists')
@@ -44,19 +44,19 @@ export class WishlistController {
     }
 
     @Get('/:id')
-    getAllWishlist(@Req() req, @Param('id') folderId: number): Promise<Wishlist[]> {
+    getAllWishlist(@Req() req, @Param('id') folderId: number): Promise<WishlistItem[]> {
         return this.wishlistFolderService.getAllWishlist(req.user.id, folderId);
     }
 
-    @Put('/:id')
-    async updateWishlist(
+    @Post('/:id')
+    async createWishlistItem(
         @Req() req,
         @Param('id') folderId: number,
-        @Body() request: UpdateWishlistRequest,
+        @Body() request: CreateWishlistItemRequest,
     ) {
-        const wishlist = request;
-        request = new UpdateWishlistRequest();
-        request = wishlist;
+        const item = request;
+        request = new CreateWishlistItemRequest();
+        request = item;
 
         const folder = await this.wishlistFolderService.updateWishlist(
             req.user.id,

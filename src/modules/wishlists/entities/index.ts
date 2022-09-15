@@ -1,2 +1,2 @@
 export * from './WishlistFolder';
-export * from './Wishlist';
+export * from './WishlistItem';
