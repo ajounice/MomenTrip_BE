@@ -9,5 +9,6 @@ import { TagModule } from '@/modules/tags/TagModule';
     imports: [TypeOrmModule.forFeature([Form, FormLike, FormComment]), TagModule],
     controllers: [FormController],
     providers: [FormService, FormLikeService, FormCommentService],
+    exports: [FormService, FormLikeService, FormCommentService, TypeOrmModule],
 })
 export class FormModule {}

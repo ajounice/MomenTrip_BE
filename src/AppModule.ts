@@ -11,6 +11,7 @@ import { TagModule } from '@/modules/tags/TagModule';
 // import { ValidationPipe } from '@/common/pipes';
 import { LoggerMiddleware } from '@/common/middlewares';
 import { CommonModule } from '@/modules/common/CommonModule';
+import { WishlistModule } from '@/modules/wishlists/WishlistModule';
 
 @Module({
     imports: [
@@ -27,6 +28,7 @@ import { CommonModule } from '@/modules/common/CommonModule';
         TourInfoModule,
         AuthModule,
         CommonModule,
+        WishlistModule,
     ],
     controllers: [],
     providers: [
