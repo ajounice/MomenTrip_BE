@@ -17,7 +17,7 @@ export class WishlistItem {
     @Column({ unsigned: true })
     targetId!: number;
 
-    @ManyToOne(() => WishlistFolder)
+    @ManyToOne(() => WishlistFolder,{ onDelete: 'CASCADE' })
     wishlistFolder!: WishlistFolder;
 
     static from(folderId: number): WishlistItem {

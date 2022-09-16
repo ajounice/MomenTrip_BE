@@ -48,7 +48,7 @@ export class WishlistController {
 
     @Get('/:id')
     getAllWishlist(@Req() req, @Param('id') folderId: number): Promise<WishlistItem[]> {
-        return this.wishlistFolderService.getAllWishlist(req.user.id, folderId);
+        return this.wishlistItemService.getAllWishlistItem(req.user.id, folderId);
     }
 
     @Post('/:id')
@@ -78,7 +78,7 @@ export class WishlistController {
         @Param('folderId') folderId: number,
         @Param('wishId') wishId: number,
     ) {
-        const deletedWishlist = await this.wishlistFolderService.deleteWishlist(
+        const deletedWishlist = await this.wishlistItemService.deleteWishlistItem(
             req.user.id,
             folderId,
             wishId,

@@ -32,8 +32,6 @@ export class WishlistItemService {
         }
         const wishlist = request.toEntity(folderId);
         return await this.wishlistItemRepository.save(wishlist);
-        //folder.wishlists.push(wishlist);
-        //return this.wishlistFolderRepository.update(folderId, folder);
     }
 
     async getWishlistItem(userId, folderId: number, wishId: number) {
@@ -56,5 +54,28 @@ export class WishlistItemService {
         } else {
             throw new BadRequestException();
         }
+    }
+
+    getAllWishlistItem(userId: number, folderId: number): Promise<WishlistItem[]> {
+        const isUser = this.wishlistFolderService.checkUser(userId, folderId);
+        if (!isUser) {
+            throw new ForbiddenException();
+        }
+        return this.wishlistItemRepository.find({
+            where: { wishlistFolder: { id: folderId } }
+        });
+    }
+
+    async deleteWishlistItem(userId: number, folderId: number, wishId: number) {
+
+        const wishlist = await this.wishlistItemRepository.findOne({
+            where: { id: wishId, wishlistFolder: { id: folderId } },
+            relations: ['wishlistFolder'],
+        });
+        if (!wishlist) {
+            throw new NotFoundException();
+        }
+
+        return this.wishlistItemRepository.remove(wishlist);
     }
 }
