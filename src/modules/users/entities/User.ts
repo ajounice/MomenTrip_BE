@@ -1,6 +1,6 @@
 import { Column, Entity, JoinTable, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Badge } from '@/modules/users/entities/Badge';
-import { Following } from '@/modules/users/entities/Following';
+import { Follow } from '@/modules/follows/entities/Follow';
 import { UserStatistics } from '@/modules/users/entities/UserStatistics';
 import { WishlistFolder } from '@/modules/wishlists/entities';
 
@@ -33,11 +33,11 @@ export class User {
     @OneToMany(() => Badge, (badge) => badge.user)
     badges!: Badge[];
 
-    @OneToMany(() => Following, (following) => following.follower)
-    followers!: Following[];
+    @OneToMany(() => Follow, (following) => following.follower)
+    followers!: Follow[];
 
-    @OneToMany(() => Following, (following) => following.following)
-    followings!: Following[];
+    @OneToMany(() => Follow, (following) => following.following)
+    followings!: Follow[];
 
     @OneToMany(() => WishlistFolder, (wishlistFolder) => wishlistFolder.user)
     wishlistFolders!: WishlistFolder[];
