@@ -28,7 +28,7 @@ export class AuthService {
             where: { email: email },
         });
         if (!user) {
-            user = this.userRepository.create({
+            user = await this.userRepository.create({
                 name,
                 email,
                 image,
