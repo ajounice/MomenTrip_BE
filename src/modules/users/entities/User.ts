@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Badge } from '@/modules/users/entities/Badge';
 import { Following } from '@/modules/users/entities/Following';
 import { UserStatistics } from '@/modules/users/entities/UserStatistics';
@@ -14,6 +14,9 @@ export class User {
 
     @Column({ unique: true, nullable: true })
     nickname!: string;
+
+    @Column({ nullable: true })
+    password!: string;
 
     @Column({ nullable: true })
     name!: string;
