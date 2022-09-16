@@ -11,6 +11,8 @@ import { User } from '@/modules/users/entities';
 
 @Injectable()
 export class FormService {
+    private MAXIMUM_FORM_VIDEO_SIZE = 41943040; // 40MB
+
     constructor(
         @InjectRepository(Form)
         private readonly formRepository: Repository<Form>,
@@ -24,11 +26,16 @@ export class FormService {
     }
 
     public findById(id: number): Promise<Form> {
-        return this.formRepository.findOne({ where: { id } });
+        return this.formRepository.findOne({
+            where: { id },
+            relations: ['tags', 'user', 'tourInfo'],
+        });
     }
 
     public async saveForm(body: SaveFormRequest, video: Express.Multer.File, user: User) {
         const entity = body.toEntity();
+
+        const { path: thumbnailPath } = await this.commonService.uploadThumbnail(video);
 
         const path = await this.commonService.upload(video, 'videos');
 
@@ -58,6 +65,8 @@ export class FormService {
         }
 
         entity.video = path;
+
+        entity.thumbnail = thumbnailPath;
 
         entity.user = user;
 
