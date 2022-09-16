@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './AuthService';
-import { CreateUserDto, UserKakaoDto, UserLocalDto } from '@/modules/auth/dto';
+import { CreateUserDto, UserKakaoDto } from '@/modules/auth/dto';
 import { User } from '@/modules/users/entities';
 
 @Controller('auth')
@@ -24,7 +24,6 @@ export class AuthController {
     @Post('/login')
     @UseGuards(AuthGuard('local'))
     async localLogin(@Req() req): Promise<{ accessToken: string }> {
-        //console.log('local login controller', req.user);
         return this.authService.localLogin(req.user);
     }
 

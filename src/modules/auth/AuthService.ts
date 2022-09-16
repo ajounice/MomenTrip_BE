@@ -4,7 +4,7 @@ import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
 import { CreateUserDto, UserKakaoDto, UserLocalDto } from '@/modules/auth/dto';
 import { JwtService } from '@nestjs/jwt';
-import { compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { BadRequestException } from '@/common/exceptions';
 
 @Injectable()
@@ -15,6 +15,13 @@ export class AuthService {
         private readonly jwtService: JwtService,
     ) {}
 
+    private async verifyPassword(plainPassword: string, hashedPassword: string) {
+        const isMatch = await compare(plainPassword, hashedPassword);
+        if (!isMatch) {
+            throw new BadRequestException();
+        }
+    }
+
     async kakaoLogin(userKakaoDto: UserKakaoDto): Promise<{ accessToken: string }> {
         const { name, email, image } = userKakaoDto;
         let user = await this.userRepository.findOne({
@@ -22,7 +29,6 @@ export class AuthService {
         });
         if (!user) {
             user = this.userRepository.create({
-                //id,
                 name,
                 email,
                 image,
@@ -37,27 +43,27 @@ export class AuthService {
 
     async validateUser(userLocalDto: UserLocalDto): Promise<User> {
         const { email, password } = userLocalDto;
-        //console.log('validateUser service', email, password);
         const user = await this.userRepository.findOne({
             where: { email: email },
         });
-        //console.log(user);
         if (!user) {
             return null;
         }
+        await this.verifyPassword(password, user.password);
+        //user.password = undefined;
+
         return user;
     }
 
     async localLogin(userLocalDto: UserLocalDto): Promise<{ accessToken: string }> {
-        const { email, password } = userLocalDto;
+        const { email } = userLocalDto;
         const user = await this.userRepository.findOne({
             where: { email: email },
         });
-        //console.log('locallogin service ', user);
-        if (!user || (user && !compare(password, user.password))) {
+        if (!user) {
             throw new BadRequestException();
         }
-        //console.log('local login service', user);
+        // await this.verifyPassword(password, user.password);
         const payload = { id: user.id };
         const accessToken = this.jwtService.sign(payload);
         return { accessToken };
@@ -68,10 +74,13 @@ export class AuthService {
         const user = await this.userRepository.count({
             where: { email: email },
         });
+
+        const hashPassword = await hash(password, 10);
+
         if (!user) {
-            const user = this.userRepository.create({
+            const user = await this.userRepository.create({
                 email,
-                password,
+                password: hashPassword,
             });
             return await this.userRepository.save(user);
         }

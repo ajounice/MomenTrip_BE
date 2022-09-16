@@ -16,7 +16,7 @@ export class User {
     nickname!: string;
 
     @Column({ nullable: true })
-    password?: string;
+    password!: string;
 
     @Column({ nullable: true })
     name!: string;
