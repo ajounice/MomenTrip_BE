@@ -11,9 +11,8 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from '@/modules/users/services/UserService';
+import { UserService, UserProfileService } from '@/modules/users/services';
 import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
-import { UserProfileService } from '@/modules/users/services';
 import { NotFoundException } from '@/common/exceptions';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';

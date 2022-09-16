@@ -16,5 +16,6 @@ import { TourInfoModule } from '@/modules/tourInfos/TourInfoModule';
     ],
     controllers: [FormController],
     providers: [FormService, FormLikeService, FormCommentService],
+    exports: [FormService, FormLikeService, FormCommentService, TypeOrmModule],
 })
 export class FormModule {}
