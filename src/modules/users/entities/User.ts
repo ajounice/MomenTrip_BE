@@ -2,7 +2,7 @@ import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typ
 import { Badge } from '@/modules/users/entities/Badge';
 import { Following } from '@/modules/users/entities/Following';
 import { UserStatistics } from '@/modules/users/entities/UserStatistics';
-import { Wishlist } from '@/modules/wishlists/entities/Wishlist';
+import { WishlistFolder } from '@/modules/wishlists/entities';
 
 @Entity({ name: 'users' })
 export class User {
@@ -42,6 +42,6 @@ export class User {
     @OneToMany(() => Following, (following) => following.following)
     followings!: Following[];
 
-    @OneToMany(() => Wishlist, (wishlist) => wishlist.user, { onDelete: 'CASCADE' })
-    wishlists!: Wishlist[];
+    @OneToMany(() => WishlistFolder, (wishlistFolder) => wishlistFolder.user)
+    wishlistFolders!: WishlistFolder[];
 }

@@ -16,5 +16,6 @@ import { ConfigModule } from '@nestjs/config';
     ],
     controllers: [TourInfoController],
     providers: [TourInfoService, TourInfoLikeService, TourInfoCommentService],
+    exports: [TourInfoService, TourInfoLikeService, TourInfoCommentService, TypeOrmModule],
 })
 export class TourInfoModule {}

@@ -4,16 +4,15 @@ import {
     Controller,
     Delete,
     Get,
-    Patch, Post,
+    Patch,
     Req,
     Res,
     UploadedFile,
     UseGuards,
-    UseInterceptors
-} from "@nestjs/common";
-import { UserService } from '@/modules/users/services/UserService';
+    UseInterceptors,
+} from '@nestjs/common';
+import { UserService, UserProfileService } from '@/modules/users/services';
 import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
-import { UserProfileService } from '@/modules/users/services';
 import { NotFoundException } from '@/common/exceptions';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -27,7 +26,7 @@ export class UserController {
     ) {}
 
     @Get('/')
-    findAll(){
+    findAll() {
         return this.userService.findAllUser();
     }
     //닉네임 중복 검사
@@ -53,8 +52,8 @@ export class UserController {
     //프로필 확인(내정보)
     @Get('/:nickname')
     async findById(@Req() req) {
-        const user = req.user.id;
-        const info = await this.userProfileService.getUserProfile(req.user.id);
+        const { id } = req.user;
+        const info = await this.userProfileService.getUserProfile(id);
         if (!info) {
             throw new NotFoundException();
         }
@@ -76,12 +75,9 @@ export class UserController {
     //사진 변경
     @Patch('/:nickname/edit/image')
     @UseInterceptors(FileInterceptor('profile_image'))
-    async updateProfileImage(@Req() req, @Res() res, @UploadedFile() file: Express.Multer.File) {
-        const { id, nickname, image } = req.user;
-        console.log({ file });
-        await this.userProfileService.updateProfileImage(id, file);
-        console.log(image);
-        return res.redirect('/users/' + nickname);
+    async updateProfileImage(@Req() req, @UploadedFile() file: Express.Multer.File) {
+        const { id } = req.user;
+        return await this.userProfileService.updateProfileImage(id, file);
     }
     //계정 변환(일반계정<->비즈니스)
 
