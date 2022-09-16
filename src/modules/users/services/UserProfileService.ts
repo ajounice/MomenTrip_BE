@@ -47,8 +47,7 @@ export class UserProfileService {
 
     async updateProfileImage(id: number, file: Express.Multer.File) {
         const profileImage: string = await this.commonService.upload(file, 'images');
-        console.log({ profileImage });
         await this.userRepository.update(id, { image: profileImage });
-        //return profileImage;
+        return profileImage;
     }
 }

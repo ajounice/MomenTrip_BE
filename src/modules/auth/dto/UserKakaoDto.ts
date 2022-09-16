@@ -1,23 +1,19 @@
 import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UserKakaoDto {
-    @IsNumber()
     @IsNotEmpty()
-    id: number;
-
-    @IsOptional()
     @IsEmail()
-    email: string | null;
+    email!: string;
 
     @IsString()
     @IsOptional()
-    name: string | null;
+    name?: string;
 
     @IsString()
     @IsNotEmpty()
-    accessToken: string;
+    accessToken!: string;
 
     @IsOptional()
     @IsString()
-    image: string | null;
+    image?: string;
 }

@@ -25,12 +25,15 @@ export class UserController {
         private readonly userProfileService: UserProfileService,
     ) {}
 
+    @Get('/')
+    findAll() {
+        return this.userService.findAllUser();
+    }
     //닉네임 중복 검사
     @Get('/:nickname/duplicate' || '/:id/duplicate')
     async checkNickname(@Body() nickname: string) {
         return await this.userService.findNickname(nickname);
     }
-
     //첫 로그인 이후 추가 정보 입력(닉네임, 소개글 등)
     @Patch('/:id')
     async createUserProfile(
@@ -49,8 +52,8 @@ export class UserController {
     //프로필 확인(내정보)
     @Get('/:nickname')
     async findById(@Req() req) {
-        const user = req.user.id;
-        const info = await this.userProfileService.getUserProfile(req.user.id);
+        const { id } = req.user;
+        const info = await this.userProfileService.getUserProfile(id);
         if (!info) {
             throw new NotFoundException();
         }
@@ -72,12 +75,9 @@ export class UserController {
     //사진 변경
     @Patch('/:nickname/edit/image')
     @UseInterceptors(FileInterceptor('profile_image'))
-    async updateProfileImage(@Req() req, @Res() res, @UploadedFile() file: Express.Multer.File) {
-        const { id, nickname, image } = req.user;
-        console.log({ file });
-        await this.userProfileService.updateProfileImage(id, file);
-        console.log(image);
-        return res.redirect('/users/' + nickname);
+    async updateProfileImage(@Req() req, @UploadedFile() file: Express.Multer.File) {
+        const { id } = req.user;
+        return await this.userProfileService.updateProfileImage(id, file);
     }
     //계정 변환(일반계정<->비즈니스)
 
