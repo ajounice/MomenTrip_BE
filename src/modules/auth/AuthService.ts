@@ -33,7 +33,7 @@ export class AuthService {
                 email,
                 image,
             });
-            await this.userRepository.save(user);
+            user = await this.userRepository.save(user);
         }
         const payload = { id: user.id };
         //유저 정보를 통해 토큰 값을 생성
