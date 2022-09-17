@@ -4,6 +4,7 @@ import {
     Controller,
     Delete,
     Get,
+    Param,
     Patch,
     Req,
     Res,
@@ -51,9 +52,8 @@ export class UserController {
 
     //프로필 확인(내정보)
     @Get('/:nickname')
-    async findById(@Req() req) {
-        const { id } = req.user;
-        const info = await this.userProfileService.getUserProfile(id);
+    async findById(@Param('nickname') nickname: string) {
+        const info = await this.userProfileService.getUserProfile(nickname);
         if (!info) {
             throw new NotFoundException();
         }

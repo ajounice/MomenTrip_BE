@@ -48,4 +48,6 @@ export class User {
 
     @OneToMany(() => Form, (form) => form.user, { onDelete: 'SET NULL' })
     forms!: Form[];
+
+    badgeList?: any[];
 }

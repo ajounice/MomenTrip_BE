@@ -7,6 +7,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CommonService } from '@/modules/common/CommonService';
 import { UserService } from '@/modules/users/services/UserService';
 
+export interface IBadgeCount {
+    name: string;
+    value: number;
+}
+
 @Injectable()
 export class UserProfileService {
     constructor(
@@ -16,11 +21,62 @@ export class UserProfileService {
         private readonly userService: UserService,
     ) {}
 
-    async getUserProfile(id: number) {
-        const user = this.userRepository.findOne({ where: { id } });
+    private tagList = ['sea', 'mountain', 'hotel', 'camping', 'activity', 'festival', 'night'];
+
+    private getBadgeCount(user: User): IBadgeCount[] {
+        let total = 0;
+        const tags = new Map();
+
+        user.forms.forEach((form) => {
+            for (const tag of form.tags) {
+                if (this.tagList.includes(tag.name)) {
+                    if (tags.has(tag.name)) {
+                        tags.set(tag.name, tags.get(tag.name) + 1);
+                    } else {
+                        tags.set(tag.name, 1);
+                    }
+                }
+            }
+        });
+
+        tags.forEach((v) => {
+            total += v;
+        });
+
+        const data = Array.from(tags).map((tag) => ({ name: tag[0], value: tag[1] }));
+
+        data.push({ name: 'total', value: total });
+
+        data.sort((a, b) => b.value - a.value);
+
+        return data;
+    }
+
+    async getUserProfileById(id: number) {
+        const user = await this.userRepository.findOne({
+            where: { id },
+            relations: ['forms', 'forms.tags'],
+        });
+
         if (!user) {
             throw new NotFoundException();
         }
+
+        user.badgeList = this.getBadgeCount(user);
+
+        return user;
+    }
+
+    async getUserProfile(nickname: string) {
+        const user = await this.userRepository.findOne({
+            where: { nickname },
+            relations: ['forms', 'forms.tags'],
+        });
+        if (!user) {
+            throw new NotFoundException();
+        }
+
+        user.badgeList = this.getBadgeCount(user);
         return user;
     }
 
@@ -31,7 +87,7 @@ export class UserProfileService {
             throw new BadRequestException();
         } else {
             await this.userRepository.update(id, createUserInfoDto);
-            return this.getUserProfile(id);
+            return this.getUserProfileById(id);
         }
     }
 
@@ -41,7 +97,7 @@ export class UserProfileService {
             throw new BadRequestException();
         } else {
             await this.userRepository.update(id, updateUserInfoDto);
-            return this.getUserProfile(id);
+            return this.getUserProfileById(id);
         }
     }
 
