@@ -1,6 +1,9 @@
 import { FormComment } from '@/modules/forms/entities';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class SaveFormCommentRequest {
+    @IsNotEmpty()
+    @IsString()
     content!: string;
 
     toEntity(userId: number, formId: number): FormComment {

@@ -94,11 +94,6 @@ export class FormController {
         // TODO: 유저 세션 관련 작업이 완료된 후 해당 세션을 사용하도록 변경해야 함
         const { id: userId } = req.user;
 
-        const content = request.content;
-
-        request = new SaveFormCommentRequest();
-        request.content = content;
-
         const comment = await this.formCommentService.saveComment(id, userId, request);
 
         if (!comment) {
