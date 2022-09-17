@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { Follow } from '@/modules/users/entities/Follow';
 import { UserService } from '@/modules/users/services/UserService';
 import { BadRequestException, NotFoundException } from '@/common/exceptions';
+import { User } from '@/modules/users/entities';
 
 @Injectable()
 export class UserFollowService {
     constructor(
         @InjectRepository(Follow)
         private readonly followRepository: Repository<Follow>,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
         private readonly userService: UserService,
     ) {}
 
@@ -64,26 +67,25 @@ export class UserFollowService {
         return await this.followRepository.remove(follow);
     }
 
-    async getAllFollower(nickname: string): Promise<Follow[]> {
-        const user = await this.userService.findByNickname(nickname);
-        console.log(user);
-        if (!user) {
-            throw new NotFoundException();
-        }
-        return await this.followRepository.find({
-            where: { following: user },
+    async getAllFollower(nickname: string): Promise<User[]> {
+        const target = await this.followRepository.find({
+            where: { following: { nickname } },
             relations: ['follower'],
         });
+
+        const users: User[] = target.map((target) => target.follower);
+        console.log(users);
+        return users;
     }
 
-    async getAllFollowing(nickname: string): Promise<Follow[]> {
-        const user = await this.userService.findByNickname(nickname);
-        if (!user) {
-            throw new NotFoundException();
-        }
-        return await this.followRepository.find({
-            where: { follower: user },
+    async getAllFollowing(nickname: string): Promise<User[]> {
+        const target = await this.followRepository.find({
+            where: { follower: { nickname } },
             relations: ['following'],
         });
+        console.log('target', target);
+        const users: User[] = target.map((target) => target.following);
+        console.log(users);
+        return users;
     }
 }

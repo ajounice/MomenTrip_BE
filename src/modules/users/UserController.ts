@@ -103,14 +103,14 @@ export class UserController {
 
     //유저의 팔로워 리스트 -유저가 대상(Follow-following)
     @Get('/:nickname/followers')
-    async getFollwerList(@Param('nickname') nickname: string) {
+    async getFollowerList(@Param('nickname') nickname: string) {
         //return this.userProfileService.getFollowerList(nickname);
         return this.userFollowService.getAllFollower(nickname);
     }
 
     //유저의 팔로잉 리스트 - 유저가 주체(Follow-follower)
     @Get('/:userNickname/followings')
-    async getFollwingList(@Param('nickname') nickname: string) {
+    async getFollowingList(@Param('nickname') nickname: string) {
         //return this.userProfileService.getFollowingList(nickname);
         return this.userFollowService.getAllFollowing(nickname);
     }
