@@ -35,7 +35,7 @@ export class AuthService {
             });
             user = await this.userRepository.save(user);
         }
-        const payload = { id: user.id };
+        const payload = { id: user.id, email: user.email };
         //유저 정보를 통해 토큰 값을 생성
         const accessToken = this.jwtService.sign(payload);
         return { accessToken };
@@ -64,7 +64,7 @@ export class AuthService {
             throw new BadRequestException();
         }
         // await this.verifyPassword(password, user.password);
-        const payload = { id: user.id };
+        const payload = { id: user.id, email: user.email };
         const accessToken = this.jwtService.sign(payload);
         return { accessToken };
     }
