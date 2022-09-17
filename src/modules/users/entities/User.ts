@@ -3,6 +3,7 @@ import { Badge } from '@/modules/users/entities/Badge';
 import { Following } from '@/modules/users/entities/Following';
 import { UserStatistics } from '@/modules/users/entities/UserStatistics';
 import { WishlistFolder } from '@/modules/wishlists/entities';
+import { Form } from '@/modules/forms/entities';
 
 @Entity({ name: 'users' })
 export class User {
@@ -44,4 +45,7 @@ export class User {
 
     @OneToMany(() => WishlistFolder, (wishlistFolder) => wishlistFolder.user)
     wishlistFolders!: WishlistFolder[];
+
+    @OneToMany(() => Form, (form) => form.user, { onDelete: 'SET NULL' })
+    forms!: Form[];
 }

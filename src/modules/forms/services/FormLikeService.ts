@@ -16,14 +16,14 @@ export class FormLikeService {
         });
     }
 
-    async like(user: { id: number }, id: number) {
-        const exists = await this.findLike(user.id, id);
+    async like(userId: number, id: number) {
+        const exists = await this.findLike(userId, id);
 
         if (exists) {
             await this.formLikeRepository.remove(exists);
             return false;
         }
-        const like = FormLike.from(user.id, id);
+        const like = FormLike.from(userId, id);
 
         await this.formLikeRepository.save(like);
         return true;
