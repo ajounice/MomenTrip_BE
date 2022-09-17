@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Follow } from '@/modules/users/entities/Follow';
 import { UserService } from '@/modules/users/services/UserService';
-import { BadRequestException, ForbiddenException, NotFoundException } from '@/common/exceptions';
+import { BadRequestException, NotFoundException } from '@/common/exceptions';
 
 @Injectable()
 export class UserFollowService {
@@ -19,16 +19,13 @@ export class UserFollowService {
         if (!isProvided) {
             throw new NotFoundException();
         }
-        console.log('follow service 1');
         const follower = await this.userService.findById(userId); //주체(follower)
         const followed = await this.userService.findByNickname(otherUser); //대상(following)
 
         if (follower.id === followed.id) {
-            console.log('뭐지 ?');
             throw new BadRequestException();
         }
 
-        console.log('follow service 2');
         const isFollowed = await this.followRepository.findOne({
             where: { follower: follower, following: followed },
         });
@@ -40,7 +37,6 @@ export class UserFollowService {
         follow.follower = follower;
         follow.following = followed;
 
-        console.log('follow service 3');
         return await this.followRepository.save(follow);
     }
 
@@ -66,5 +62,28 @@ export class UserFollowService {
         }
 
         return await this.followRepository.remove(follow);
+    }
+
+    async getAllFollower(nickname: string): Promise<Follow[]> {
+        const user = await this.userService.findByNickname(nickname);
+        console.log(user);
+        if (!user) {
+            throw new NotFoundException();
+        }
+        return await this.followRepository.find({
+            where: { following: user },
+            relations: ['follower'],
+        });
+    }
+
+    async getAllFollowing(nickname: string): Promise<Follow[]> {
+        const user = await this.userService.findByNickname(nickname);
+        if (!user) {
+            throw new NotFoundException();
+        }
+        return await this.followRepository.find({
+            where: { follower: user },
+            relations: ['following'],
+        });
     }
 }

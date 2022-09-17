@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CommonService } from '@/modules/common/CommonService';
 import { UserService } from '@/modules/users/services/UserService';
+import { UserFollowService } from '@/modules/users/services/UserFollowService';
 
 @Injectable()
 export class UserProfileService {
@@ -14,6 +15,7 @@ export class UserProfileService {
         private readonly userRepository: Repository<User>,
         private readonly commonService: CommonService,
         private readonly userService: UserService,
+        private readonly userFollowService: UserFollowService,
     ) {}
 
     async getUserProfile(id: number) {
@@ -51,11 +53,5 @@ export class UserProfileService {
         return profileImage;
     }
 
-    getFollowingList(id: any, nickname: string) {
-        return Promise.resolve(undefined);
-    }
 
-    getFollowerList(id: any, nickname: string) {
-        return Promise.resolve(undefined);
-    }
 }

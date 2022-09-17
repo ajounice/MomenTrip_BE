@@ -100,16 +100,18 @@ export class UserController {
         const { id } = req.user;
         return await this.userFollowService.unFollow(id, other);
     }
-    //팔로워 리스트
+
+    //유저의 팔로워 리스트 -유저가 대상(Follow-following)
     @Get('/:nickname/followers')
-    async getFollwerList(@Req() req, @Param('nickname') nickname: string) {
-        const { id } = req.user;
-        return this.userProfileService.getFollowerList(id, nickname);
+    async getFollwerList(@Param('nickname') nickname: string) {
+        //return this.userProfileService.getFollowerList(nickname);
+        return this.userFollowService.getAllFollower(nickname);
     }
-    //팔로잉 리스트
+
+    //유저의 팔로잉 리스트 - 유저가 주체(Follow-follower)
     @Get('/:userNickname/followings')
-    async getFollwingList(@Req() req, @Param('nickname') nickname: string) {
-        const { id } = req.user;
-        return this.userProfileService.getFollowingList(id, nickname);
+    async getFollwingList(@Param('nickname') nickname: string) {
+        //return this.userProfileService.getFollowingList(nickname);
+        return this.userFollowService.getAllFollowing(nickname);
     }
 }
