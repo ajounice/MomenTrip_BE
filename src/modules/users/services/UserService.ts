@@ -24,7 +24,11 @@ export class UserService {
         await this.userRepository.delete({ id: id });
     }
 
-    findAllUser(): Promise<User[]> {
-        return this.userRepository.find();
+    public findById(id: number): Promise<User> {
+        return this.userRepository.findOne({ where: { id } });
+    }
+
+    public findByNickname(nickname: string): Promise<User> {
+        return this.userRepository.findOne({ where: { nickname } });
     }
 }

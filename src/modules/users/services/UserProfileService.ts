@@ -50,4 +50,12 @@ export class UserProfileService {
         await this.userRepository.update(id, { image: profileImage });
         return profileImage;
     }
+
+    getFollowingList(id: any, nickname: string) {
+        return Promise.resolve(undefined);
+    }
+
+    getFollowerList(id: any, nickname: string) {
+        return Promise.resolve(undefined);
+    }
 }

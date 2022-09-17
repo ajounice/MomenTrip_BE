@@ -4,31 +4,30 @@ import {
     Controller,
     Delete,
     Get,
+    Param,
     Patch,
+    Post,
     Req,
     Res,
     UploadedFile,
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { UserService, UserProfileService } from '@/modules/users/services';
+import { UserService, UserProfileService, UserFollowService } from '@/modules/users/services';
 import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
 import { NotFoundException } from '@/common/exceptions';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(AuthGuard('jwt'))
-@Controller('users')
+@Controller('/')//기존 users
 export class UserController {
     constructor(
         private readonly userService: UserService,
         private readonly userProfileService: UserProfileService,
+        private readonly userFollowService: UserFollowService,
     ) {}
 
-    @Get('/')
-    findAll() {
-        return this.userService.findAllUser();
-    }
     //닉네임 중복 검사
     @Get('/:nickname/duplicate' || '/:id/duplicate')
     async checkNickname(@Body() nickname: string) {
@@ -86,5 +85,31 @@ export class UserController {
     async remove(@Req() req) {
         const { id } = req.user;
         return this.userService.deleteUser(id);
+    }
+
+    //팔로우
+    @Post('/:nickname/follow')
+    async follow(@Req() req, @Param('nickname') other: string) {
+        const { id } = req.user;
+        return await this.userFollowService.follow(id, other);
+    }
+
+    //언팔로우
+    @Delete('/:nickname/unfollow')
+    async unFollow(@Req() req, @Param('nickname') other: string) {
+        const { id } = req.user;
+        return await this.userFollowService.unFollow(id, other);
+    }
+    //팔로워 리스트
+    @Get('/:nickname/followers')
+    async getFollwerList(@Req() req, @Param('nickname') nickname: string) {
+        const { id } = req.user;
+        return this.userProfileService.getFollowerList(id, nickname);
+    }
+    //팔로잉 리스트
+    @Get('/:userNickname/followings')
+    async getFollwingList(@Req() req, @Param('nickname') nickname: string) {
+        const { id } = req.user;
+        return this.userProfileService.getFollowingList(id, nickname);
     }
 }

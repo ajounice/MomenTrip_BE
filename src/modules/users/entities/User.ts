@@ -1,6 +1,6 @@
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 import { Badge } from '@/modules/users/entities/Badge';
-import { Follow } from '@/modules/follows/entities/Follow';
+import { Follow } from '@/modules/users/entities/Follow';
 import { UserStatistics } from '@/modules/users/entities/UserStatistics';
 import { WishlistFolder } from '@/modules/wishlists/entities';
 
@@ -37,10 +37,10 @@ export class User {
     badges!: Badge[];
 
     @OneToMany(() => Follow, (follow) => follow.follower)
-    followers!: Follow[];
+    followers!: Follow[]; //유저를 팔로우
 
     @OneToMany(() => Follow, (follow) => follow.following)
-    followings!: Follow[];
+    followings!: Follow[]; //유저가 팔로우 (대상)
 
     @OneToMany(() => WishlistFolder, (wishlistFolder) => wishlistFolder.user)
     wishlistFolders!: WishlistFolder[];
