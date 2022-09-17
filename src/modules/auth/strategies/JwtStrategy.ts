@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
@@ -20,8 +20,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload) {
-        const { email } = payload;
-        const user: User = await this.userRepository.findOne({ where: { email } });
+        console.log('jwt token', payload);
+        const { id } = payload;
+        console.log(id);
+        const user: User = await this.userRepository.findOne({ where: { id } });
         if (!user) {
             throw new UnauthorizedException('InvalidToken');
         }

@@ -9,4 +9,12 @@ export class FollowService {
         @InjectRepository(Follow)
         private readonly followRepository: Repository<Follow>,
     ) {}
+
+    async unFollow(id: any, other: string) {
+        return Promise.resolve(undefined);
+    }
+
+    async follow(id: any, other: string) {
+        return Promise.resolve(undefined);
+    }
 }

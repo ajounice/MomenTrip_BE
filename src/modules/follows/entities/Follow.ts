@@ -7,10 +7,10 @@ export class Follow {
     id!: number;
 
     @ManyToOne(() => User, (user) => user.followers)
-    follower!: User;//나를 팔로우 하는 유저
+    follower!: User;
 
     @ManyToOne(() => User, (user) => user.followings)
-    following!: User;//내가 팔로우 하는 유저
+    following!: User;
 
     @RelationId((following: Follow) => following.follower)
     followerId!: number;

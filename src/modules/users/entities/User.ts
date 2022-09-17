@@ -36,10 +36,10 @@ export class User {
     @OneToMany(() => Badge, (badge) => badge.user)
     badges!: Badge[];
 
-    @OneToMany(() => Follow, (following) => following.follower)
+    @OneToMany(() => Follow, (follow) => follow.follower)
     followers!: Follow[];
 
-    @OneToMany(() => Follow, (following) => following.following)
+    @OneToMany(() => Follow, (follow) => follow.following)
     followings!: Follow[];
 
     @OneToMany(() => WishlistFolder, (wishlistFolder) => wishlistFolder.user)

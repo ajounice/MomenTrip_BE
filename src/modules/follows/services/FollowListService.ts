@@ -9,4 +9,12 @@ export class FollowListService {
         @InjectRepository(Follow)
         private readonly followRepository: Repository<Follow>,
     ) {}
+
+    getAllFollower(id: any, nickname: string) {
+        
+    }
+
+    getAllFollowing(id: any, nickname: string) {
+        
+    }
 }
