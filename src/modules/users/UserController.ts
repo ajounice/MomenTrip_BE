@@ -41,7 +41,7 @@ export class UserController {
 
     //프로필 확인(타인)
     @Get('/:nickname')
-    async getProfile(@Body() nickname: string) {
+    async getProfile(@Param('nickname') nickname: string) {
         const user = await this.userService.findByNickname(nickname);
         const info = await this.userProfileService.getUserProfile(user.id);
         if (!info) {
@@ -59,6 +59,12 @@ export class UserController {
             throw new BadRequestException();
         }
         return info;
+    }
+
+    //닉네임 중복 검사
+    @Get('me/edit/check-nickname')
+    checkNickname(@Body() nickname: string) {
+        return this.userService.checkNickname(nickname);
     }
 
     //프로필 수정 - 최초(닉네임 필수)
