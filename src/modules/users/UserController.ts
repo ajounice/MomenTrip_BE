@@ -20,7 +20,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(AuthGuard('jwt'))
-@Controller('/')//기존 users
+@Controller('users')
 export class UserController {
     constructor(
         private readonly userService: UserService,
@@ -28,13 +28,41 @@ export class UserController {
         private readonly userFollowService: UserFollowService,
     ) {}
 
-    //닉네임 중복 검사
-    @Get('/:nickname/duplicate' || '/:id/duplicate')
-    async checkNickname(@Body() nickname: string) {
-        return await this.userService.findNickname(nickname);
+    //프로필 확인(본인)
+    @Get('/me')
+    async getMyProfile(@Req() req) {
+        const { id } = req.user;
+        const info = await this.userProfileService.getUserProfile(id);
+        if (!info) {
+            throw new NotFoundException();
+        }
+        return info;
     }
-    //첫 로그인 이후 추가 정보 입력(닉네임, 소개글 등)
-    @Patch('/:id')
+
+    //프로필 확인(타인)
+    @Get('/:nickname')
+    async getProfile(@Body() nickname: string) {
+        const user = await this.userService.findByNickname(nickname);
+        const info = await this.userProfileService.getUserProfile(user.id);
+        if (!info) {
+            throw new NotFoundException();
+        }
+        return info;
+    }
+
+    //프로필 수정 페이지 조회
+    @Get('me/edit')
+    async getUserProfile(@Req() req) {
+        const { id } = req.user;
+        const info = await this.userProfileService.getUserProfile(id);
+        if (!info) {
+            throw new BadRequestException();
+        }
+        return info;
+    }
+
+    //프로필 수정 - 최초(닉네임 필수)
+    @Patch('me/edit')
     async createUserProfile(
         @Req() req,
         @Body() nickname: string,
@@ -48,31 +76,19 @@ export class UserController {
         return createdInfo;
     }
 
-    //프로필 확인(내정보)
-    @Get('/:nickname')
-    async findById(@Req() req) {
-        const { id } = req.user;
-        const info = await this.userProfileService.getUserProfile(id);
-        if (!info) {
-            throw new NotFoundException();
-        }
-        return info;
-    }
-
-    //프로필 수정
-    @Patch('/:nickname/edit')
-    async updateUserProfile(@Req() req, @Res() res, @Body() updateUserInfoDto: UpdateUserInfoDto) {
+    //프로필 수정 - 최초x
+    @Patch('me/edit/update')
+    async updateUserProfile(@Req() req, @Body() updateUserInfoDto: UpdateUserInfoDto) {
         const { id } = req.user;
         const updatedInfo = await this.userProfileService.updateUserProfile(id, updateUserInfoDto);
         if (!updatedInfo) {
-            console.log('no updated info');
             throw new BadRequestException();
         }
-        return res.redirect('/users/' + updateUserInfoDto.nickname);
+
+        return updatedInfo;
     }
 
-    //사진 변경
-    @Patch('/:nickname/edit/image')
+    @Patch('/me/edit/image')
     @UseInterceptors(FileInterceptor('profile_image'))
     async updateProfileImage(@Req() req, @UploadedFile() file: Express.Multer.File) {
         const { id } = req.user;
@@ -81,7 +97,7 @@ export class UserController {
     //계정 변환(일반계정<->비즈니스)
 
     //탈퇴
-    @Delete('/:nickname/quit')
+    @Delete('/me/quit')
     async remove(@Req() req) {
         const { id } = req.user;
         return this.userService.deleteUser(id);
@@ -104,14 +120,12 @@ export class UserController {
     //유저의 팔로워 리스트 -유저가 대상(Follow-following)
     @Get('/:nickname/followers')
     async getFollowerList(@Param('nickname') nickname: string) {
-        //return this.userProfileService.getFollowerList(nickname);
         return this.userFollowService.getAllFollower(nickname);
     }
 
     //유저의 팔로잉 리스트 - 유저가 주체(Follow-follower)
-    @Get('/:userNickname/followings')
+    @Get('/:nickname/followings')
     async getFollowingList(@Param('nickname') nickname: string) {
-        //return this.userProfileService.getFollowingList(nickname);
         return this.userFollowService.getAllFollowing(nickname);
     }
 }

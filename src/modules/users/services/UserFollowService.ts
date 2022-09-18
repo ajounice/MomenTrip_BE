@@ -18,7 +18,7 @@ export class UserFollowService {
 
     async follow(userId: number, otherUser: string) {
         //대상 존재 체크
-        const isProvided = await this.userService.findNickname(otherUser);
+        const isProvided = await this.userService.checkNickname(otherUser);
         if (!isProvided) {
             throw new NotFoundException();
         }
@@ -28,11 +28,11 @@ export class UserFollowService {
         if (follower.id === followed.id) {
             throw new BadRequestException();
         }
-
-        const isFollowed = await this.followRepository.findOne({
+        console.log('isFollow1');
+        const isFollowed = await this.followRepository.count({
             where: { follower: follower, following: followed },
         });
-
+        console.log('isFollow', isFollowed);
         if (isFollowed) {
             throw new BadRequestException();
         }
@@ -44,7 +44,7 @@ export class UserFollowService {
     }
 
     async unFollow(userId: number, otherUser: string) {
-        const isProvided = await this.userService.findNickname(otherUser);
+        const isProvided = await this.userService.checkNickname(otherUser);
         if (!isProvided) {
             throw new NotFoundException();
         }
@@ -74,7 +74,6 @@ export class UserFollowService {
         });
 
         const users: User[] = target.map((target) => target.follower);
-        console.log(users);
         return users;
     }
 
