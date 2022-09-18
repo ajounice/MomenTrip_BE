@@ -28,11 +28,9 @@ export class UserFollowService {
         if (follower.id === followed.id) {
             throw new BadRequestException();
         }
-        console.log('isFollow1');
         const isFollowed = await this.followRepository.count({
             where: { follower: follower, following: followed },
         });
-        console.log('isFollow', isFollowed);
         if (isFollowed) {
             throw new BadRequestException();
         }
@@ -72,7 +70,6 @@ export class UserFollowService {
             where: { following: { nickname } },
             relations: ['follower'],
         });
-
         const users: User[] = target.map((target) => target.follower);
         return users;
     }
@@ -82,9 +79,7 @@ export class UserFollowService {
             where: { follower: { nickname } },
             relations: ['following'],
         });
-        console.log('target', target);
         const users: User[] = target.map((target) => target.following);
-        console.log(users);
         return users;
     }
 }
