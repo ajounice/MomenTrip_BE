@@ -11,14 +11,10 @@ export class UserService {
     ) {}
 
     //닉네임 중복 검사
-    public async checkNickname(nickname: string): Promise<boolean> {
+    async checkNickname(nickname: string): Promise<boolean> {
         const count = await this.userRepository.count({ where: { nickname: nickname } });
-        console.log(count);
 
-        if (count) {
-            return true; //중복 존재
-        }
-        return false;
+        return !!count;
     }
 
     //탈퇴

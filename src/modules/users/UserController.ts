@@ -61,9 +61,10 @@ export class UserController {
     }
 
     //닉네임 중복 검사
-    @Get('me/edit/check-nickname')
-    checkNickname(@Body() nickname: string) {
-        return this.userService.checkNickname(nickname);
+    @Get('me/edit/nickname/duplicate')
+    async checkNickname(@Body('nickname') nickname: string) {
+        const isDuplicated = await this.userService.checkNickname(nickname);
+        return isDuplicated;
     }
 
     //프로필 수정 - 최초(닉네임 필수)
