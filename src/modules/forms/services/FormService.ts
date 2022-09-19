@@ -22,24 +22,18 @@ export class FormService {
     ) {}
 
     public async getAll(query?: { tag: string[] }): Promise<Form[]> {
-        const queryBuilder = this.formRepository
-            .createQueryBuilder('form')
-            .select()
-            .leftJoinAndSelect('form.user', 'user')
-            .leftJoinAndSelect('form.tags', 'tags');
-        if (query.tag) {
-            queryBuilder.andWhere('tags.name in (:tag)', {
-                tag: query.tag,
+        if (query?.tag) {
+            const tmp = await this.formRepository.find({
+                where: { tags: { name: In(query.tag) } },
+                relations: ['tags', 'user'],
             });
 
-            const ids = (await queryBuilder.getMany()).map((v) => v.id);
+            const ids = tmp.map((form) => form.id);
 
-            return this.formRepository.find({
-                where: { id: In(ids) },
-                relations: ['tags'],
-            });
+            return this.formRepository.find({ where: { id: In(ids) }, relations: ['tags'] });
         }
-        return queryBuilder.getMany();
+
+        return this.formRepository.find({ relations: ['tags'] });
     }
 
     public findById(id: number): Promise<Form> {
