@@ -29,7 +29,7 @@ export class UserFollowService {
             throw new BadRequestException();
         }
         const isFollowed = await this.followRepository.count({
-            where: { follower: follower, following: followed },
+            where: { follower: { id: userId }, following: { nickname: otherUser } },
         });
         if (isFollowed) {
             throw new BadRequestException();
@@ -55,7 +55,7 @@ export class UserFollowService {
         }
 
         const follow = await this.followRepository.findOne({
-            where: { follower: follower, following: followed },
+            where: { follower: { id: userId }, following: { nickname: otherUser } },
         });
 
         if (!follow) {
