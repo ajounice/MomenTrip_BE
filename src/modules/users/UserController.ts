@@ -28,7 +28,7 @@ export class UserController {
     ) {}
 
     //프로필 확인(본인)
-    @Get('/me')
+    @Get('/my')
     async getMyProfile(@Req() req) {
         const { id } = req.user;
         const info = await this.userProfileService.getUserProfile(id);
@@ -50,7 +50,7 @@ export class UserController {
     }
 
     //프로필 수정 페이지 조회
-    @Get('me/edit')
+    @Get('my/edit')
     async getUserProfile(@Req() req) {
         const { id } = req.user;
         const info = await this.userProfileService.getUserProfile(id);
@@ -61,14 +61,14 @@ export class UserController {
     }
 
     //닉네임 중복 검사
-    @Get('me/edit/nickname/duplicate')
+    @Get('my/edit/nickname/duplicate')
     async checkNickname(@Body('nickname') nickname: string) {
         const isDuplicated = await this.userService.checkNickname(nickname);
         return isDuplicated;
     }
 
     //프로필 수정 - 최초(닉네임 필수)
-    @Patch('me/edit')
+    @Patch('my/edit')
     async createUserProfile(
         @Req() req,
         @Body() nickname: string,
@@ -83,7 +83,7 @@ export class UserController {
     }
 
     //프로필 수정 - 최초x
-    @Patch('me/edit/update')
+    @Patch('my/edit/update')
     async updateUserProfile(@Req() req, @Body() updateUserInfoDto: UpdateUserInfoDto) {
         const { id } = req.user;
         const updatedInfo = await this.userProfileService.updateUserProfile(id, updateUserInfoDto);
@@ -94,7 +94,7 @@ export class UserController {
         return updatedInfo;
     }
 
-    @Patch('/me/edit/image')
+    @Patch('/my/edit/image')
     @UseInterceptors(FileInterceptor('profile_image'))
     async updateProfileImage(@Req() req, @UploadedFile() file: Express.Multer.File) {
         const { id } = req.user;
@@ -103,7 +103,7 @@ export class UserController {
     //계정 변환(일반계정<->비즈니스)
 
     //탈퇴
-    @Delete('/me/quit')
+    @Delete('/my/quit')
     async remove(@Req() req) {
         const { id } = req.user;
         return this.userService.deleteUser(id);
@@ -123,14 +123,14 @@ export class UserController {
         return await this.userFollowService.unFollow(id, other);
     }
     //나의 팔로워 리스트
-    @Get('/me/followers')
+    @Get('/my/followers')
     async getMyFollowerList(@Req() req) {
         const { nickname } = req.user;
         return this.userFollowService.getAllFollower(nickname);
     }
 
     //나의 팔로잉 리스트
-    @Get('/me/followings')
+    @Get('/my/followings')
     async getMyFollowingList(@Req() req) {
         const { nickname } = req.user;
         return this.userFollowService.getAllFollowing(nickname);

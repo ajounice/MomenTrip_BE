@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Badge } from '@/modules/users/entities/Badge';
 import { Follow } from '@/modules/users/entities/Follow';
 import { UserStatistics } from '@/modules/users/entities/UserStatistics';

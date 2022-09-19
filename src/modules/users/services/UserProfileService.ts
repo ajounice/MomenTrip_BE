@@ -1,4 +1,3 @@
-import { NotFoundException } from '@/common/exceptions';
 import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
@@ -7,7 +6,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CommonService } from '@/modules/common/CommonService';
 import { UserService } from '@/modules/users/services/UserService';
 import { UserFollowService } from '@/modules/users/services/UserFollowService';
-import { networkInterfaces } from 'os';
 
 @Injectable()
 export class UserProfileService {
@@ -16,7 +14,6 @@ export class UserProfileService {
         private readonly userRepository: Repository<User>,
         private readonly commonService: CommonService,
         private readonly userService: UserService,
-        private readonly userFollowService: UserFollowService,
     ) {}
 
     async getUserProfile(id: number) {

@@ -17,7 +17,7 @@ export class WishlistFolderService {
 
     public async checkUser(userId: number, folderId: number) {
         const user = await this.wishlistFolderRepository.count({
-            where: { id: folderId, user: { id: userId } }
+            where: { id: folderId, user: { id: userId } },
         });
         if (user) {
             //유저의 wishlist folder가 맞을 시

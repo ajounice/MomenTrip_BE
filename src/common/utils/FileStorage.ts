@@ -16,7 +16,10 @@ export class FileStorage {
         });
     }
 
-    async upload(type: string, body: Express.Multer.File): Promise<{ path: string }> {
+    async upload(
+        type: string,
+        body: Pick<Express.Multer.File, 'buffer' | 'mimetype'>,
+    ): Promise<{ path: string }> {
         try {
             const key = `${type}/${v4()}`;
             const result = await this.s3
@@ -29,7 +32,9 @@ export class FileStorage {
                 })
                 .promise();
 
-            console.log(result.$response);
+            if (result.$response.err) {
+                console.log(result.$response);
+            }
 
             const fullURL = `${this.configService.get<string>('AWS_BUCKET_URL')}${key}`;
 
