@@ -1,9 +1,8 @@
 import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Badge } from '@/modules/users/entities/Badge';
-import { Following } from '@/modules/users/entities/Following';
+import { Follow } from '@/modules/users/entities/Follow';
 import { UserStatistics } from '@/modules/users/entities/UserStatistics';
 import { WishlistFolder } from '@/modules/wishlists/entities';
-import { Form } from '@/modules/forms/entities';
 
 @Entity({ name: 'users' })
 export class User {
@@ -37,15 +36,12 @@ export class User {
     @OneToMany(() => Badge, (badge) => badge.user)
     badges!: Badge[];
 
-    @OneToMany(() => Following, (following) => following.follower)
-    followers!: Following[];
+    @OneToMany(() => Follow, (follow) => follow.follower)
+    followers!: Follow[]; //유저를 팔로우
 
-    @OneToMany(() => Following, (following) => following.following)
-    followings!: Following[];
+    @OneToMany(() => Follow, (follow) => follow.following)
+    followings!: Follow[]; //유저가 팔로우 (대상)
 
     @OneToMany(() => WishlistFolder, (wishlistFolder) => wishlistFolder.user)
     wishlistFolders!: WishlistFolder[];
-
-    @OneToMany(() => Form, (form) => form.user, { onDelete: 'SET NULL' })
-    forms!: Form[];
 }

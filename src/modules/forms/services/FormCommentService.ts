@@ -20,8 +20,9 @@ export class FormCommentService {
     }
 
     saveComment(formId: number, userId: number, request: SaveFormCommentRequest) {
+        console.log(request);
         const comment = request.toEntity(userId, formId);
-
+        console.log(comment);
         return this.formCommentRepository.save(comment);
     }
 

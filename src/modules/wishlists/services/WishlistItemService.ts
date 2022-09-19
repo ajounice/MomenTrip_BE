@@ -46,7 +46,6 @@ export class WishlistItemService {
         if (!item) {
             throw new NotFoundException();
         }
-
         if (item.type == 'TOUR') {
             return await this.tourInfoService.findById(item.targetId);
         } else if (item.type == 'FORM') {
