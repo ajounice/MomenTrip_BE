@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Form } from '@/modules/forms/entities';
 import { TagService } from '@/modules/tags/TagService';
 import { CommonService } from '@/modules/common/CommonService';
@@ -21,7 +21,18 @@ export class FormService {
         private readonly tourInfoService: TourInfoService,
     ) {}
 
-    public getAll(): Promise<Form[]> {
+    public async getAll(query?: { tag: string[] }): Promise<Form[]> {
+        if (query?.tag) {
+            const tmp = await this.formRepository.find({
+                where: { tags: { name: In(query.tag) } },
+                relations: ['tags', 'user'],
+            });
+
+            const ids = tmp.map((form) => form.id);
+
+            return this.formRepository.find({ where: { id: In(ids) }, relations: ['tags'] });
+        }
+
         return this.formRepository.find({ relations: ['tags', 'user'] });
     }
 
