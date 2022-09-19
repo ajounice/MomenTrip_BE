@@ -28,9 +28,11 @@ export class UserFollowService {
         if (follower.id === followed.id) {
             throw new BadRequestException();
         }
+
         const isFollowed = await this.followRepository.count({
             where: { follower: { id: userId }, following: { nickname: otherUser } },
         });
+
         if (isFollowed) {
             throw new BadRequestException();
         }
@@ -58,6 +60,7 @@ export class UserFollowService {
             where: { follower: { id: userId }, following: { nickname: otherUser } },
         });
 
+
         if (!follow) {
             throw new BadRequestException();
         }
@@ -81,5 +84,52 @@ export class UserFollowService {
         });
         const users: User[] = target.map((target) => target.following);
         return users;
+    }
+
+    async checkFollowing(userId: number, otherUser: string) {
+        //대상 존재 체크
+        const isProvided = await this.userService.checkNickname(otherUser);
+        if (!isProvided) {
+            throw new NotFoundException();
+        }
+        const follower = await this.userService.findById(userId); //주체(follower)
+        const followed = await this.userService.findByNickname(otherUser); //대상(following)
+
+        if (follower.id === followed.id) {
+            throw new BadRequestException();
+        }
+
+        const following = await this.followRepository.findOne({
+            where: { follower: { id: userId }, following: { nickname: otherUser } },
+        });
+
+        if (following) {
+            return true;
+        }
+        return false;
+    }
+
+    async checkFollower(userId: number, otherUser: string) {
+        //대상 존재 체크
+        const isProvided = await this.userService.checkNickname(otherUser);
+        if (!isProvided) {
+            throw new NotFoundException();
+        }
+
+        const follower = await this.userService.findByNickname(otherUser); //주체(follower)
+        const followed = await this.userService.findById(userId); //대상(following)
+
+        if (follower.id === followed.id) {
+            throw new BadRequestException();
+        }
+
+        const following = await this.followRepository.findOne({
+            where: { follower: { nickname: otherUser }, following: { id: userId } },
+        });
+
+        if (following) {
+            return true;
+        }
+        return false;
     }
 }
