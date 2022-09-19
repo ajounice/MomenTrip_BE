@@ -1,4 +1,3 @@
-import { NotFoundException } from '@/common/exceptions';
 import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
@@ -56,6 +55,7 @@ export class UserProfileService {
         const info = await this.userRepository.findOne({
             select: ['nickname', 'name', 'intro', 'type', 'image'],
             where: { id },
+            relations: ['forms', 'forms.tags'],
         });
 
         info.badgeList = this.getBadgeCount(info);
