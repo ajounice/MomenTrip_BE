@@ -8,7 +8,6 @@ import {
     Patch,
     Post,
     Req,
-    Res,
     UploadedFile,
     UseGuards,
     UseInterceptors,
@@ -123,6 +122,21 @@ export class UserController {
         const { id } = req.user;
         return await this.userFollowService.unFollow(id, other);
     }
+
+    //팔로잉 상태
+    @Get('/:nickname/following')
+    async checkFollowing(@Req() req, @Param('nickname') other: string) {
+        const { id } = req.user;
+        return await this.userFollowService.checkFollowing(id, other);
+    }
+
+    //팔로워 상태
+    @Get('/:nickname/follower')
+    async checkFollower(@Req() req, @Param('nickname') other: string) {
+        const { id } = req.user;
+        return await this.userFollowService.checkFollower(id, other);
+    }
+
     //나의 팔로워 리스트
     @Get('/my/followers')
     async getMyFollowerList(@Req() req) {
