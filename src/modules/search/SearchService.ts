@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FormService } from '@/modules/forms/services';
 import { TourInfoService } from '@/modules/tourInfos/services';
-import { UserService } from '@/modules/users/UserService';
+import { UserService } from '@/modules/users/services';
 import { SearchQuery } from '@/modules/search/dto';
 import { TourInfo } from '@/modules/tourInfos/entities';
 import { User } from '../users/entities';

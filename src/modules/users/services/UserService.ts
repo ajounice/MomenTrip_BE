@@ -26,6 +26,14 @@ export class UserService {
         return this.userRepository.findOne({ where: { id } });
     }
 
+    public filterByNickname(text: string) {
+        return this.userRepository
+            .createQueryBuilder('user')
+            .select()
+            .where(`user.nickname like :text`, { text: `%${text}%` })
+            .getMany();
+    }
+
     public findByNickname(nickname: string): Promise<User> {
         return this.userRepository.findOne({ where: { nickname } });
     }
