@@ -8,7 +8,7 @@ import { Follow, User } from '@/modules/users/entities';
 
 @Module({
     imports: [TypeOrmModule.forFeature([User, Follow]), AuthModule, CommonModule],
-    exports: [UserService],
+    exports: [UserService, UserFollowService, TypeOrmModule],
     controllers: [UserController],
     providers: [UserService, UserProfileService, UserFollowService],
 })

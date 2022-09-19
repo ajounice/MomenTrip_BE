@@ -82,4 +82,51 @@ export class UserFollowService {
         const users: User[] = target.map((target) => target.following);
         return users;
     }
+
+    async checkFollowing(userId: number, otherUser: string): Promise<boolean> {
+        //대상 존재 체크
+        const isProvided = await this.userService.checkNickname(otherUser);
+        if (!isProvided) {
+            throw new NotFoundException();
+        }
+        const follower = await this.userService.findById(userId); //주체(follower)
+        const followed = await this.userService.findByNickname(otherUser); //대상(following)
+
+        if (follower.id === followed.id) {
+            throw new BadRequestException();
+        }
+
+        const following = await this.followRepository.findOne({
+            where: { follower: follower, following: followed },
+        });
+
+        if (following) {
+            return true;
+        }
+        return false;
+    }
+
+    async checkFollower(userId: number, otherUser: string): Promise<boolean> {
+        //대상 존재 체크
+        const isProvided = await this.userService.checkNickname(otherUser);
+        if (!isProvided) {
+            throw new NotFoundException();
+        }
+
+        const follower = await this.userService.findByNickname(otherUser); //주체(follower)
+        const followed = await this.userService.findById(userId); //대상(following)
+
+        if (follower.id === followed.id) {
+            throw new BadRequestException();
+        }
+
+        const following = await this.followRepository.findOne({
+            where: { follower: follower, following: followed },
+        });
+
+        if (following) {
+            return true;
+        }
+        return false;
+    }
 }
