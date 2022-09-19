@@ -33,7 +33,7 @@ export class FormService {
             return this.formRepository.find({ where: { id: In(ids) }, relations: ['tags'] });
         }
 
-        return this.formRepository.find({ relations: ['tags'] });
+        return this.formRepository.find({ relations: ['tags', 'user'] });
     }
 
     public findById(id: number): Promise<Form> {
@@ -82,5 +82,11 @@ export class FormService {
         entity.user = user;
 
         return this.formRepository.save(entity);
+    }
+
+    public async getThumbnailByIds(ids: number[]): Promise<string[]> {
+        const forms = await this.formRepository.find({ where: { id: In(ids) } });
+
+        return forms.map((form) => form.thumbnail);
     }
 }

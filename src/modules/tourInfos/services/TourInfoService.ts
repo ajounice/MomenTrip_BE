@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TourInfo } from '@/modules/tourInfos/entities';
@@ -51,6 +51,12 @@ export class TourInfoService {
 
     public findByName(name): Promise<TourInfo> {
         return this.tourInfoRepository.findOne({ where: { name } });
+    }
+
+    public async getImageByIds(ids: number[]): Promise<string[]> {
+        const data = await this.tourInfoRepository.find({ where: { id: In(ids) } });
+
+        return data.map((info) => info.image);
     }
 
     public async createInfo(site) {
