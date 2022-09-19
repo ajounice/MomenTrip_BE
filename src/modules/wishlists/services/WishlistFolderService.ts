@@ -7,12 +7,16 @@ import {
     CreateWishlistItemRequest,
 } from '@/modules/wishlists/dtos/requests';
 import { ForbiddenException, NotFoundException } from '@/common/exceptions';
+import { FormService } from '@/modules/forms/services';
+import { TourInfoService } from '@/modules/tourInfos/services';
 
 @Injectable()
 export class WishlistFolderService {
     constructor(
         @InjectRepository(WishlistFolder)
         private readonly wishlistFolderRepository: Repository<WishlistFolder>,
+        private readonly formService: FormService,
+        private readonly tourInfoService: TourInfoService,
     ) {}
 
     public async checkUser(userId: number, folderId: number) {
@@ -26,11 +30,27 @@ export class WishlistFolderService {
         return false;
     }
 
-    getAllFolder(userId: number): Promise<WishlistFolder[]> {
-        return this.wishlistFolderRepository.find({
+    async getAllFolder(userId: number): Promise<WishlistFolder[]> {
+        const folders = await this.wishlistFolderRepository.find({
             where: { user: { id: userId } },
             relations: ['wishlists'],
         });
+
+        for (const folder of folders) {
+            const formIds = folder.wishlists
+                .filter((item) => item.type === 'FORM')
+                .map((item) => item.targetId);
+            const infoIds = folder.wishlists
+                .filter((item) => item.type === 'INFO')
+                .map((item) => item.targetId);
+
+            const thumbnails = await this.formService.getThumbnailByIds(formIds);
+            const images = await this.tourInfoService.getImageByIds(infoIds);
+
+            folder.images = images.concat(thumbnails);
+        }
+
+        return folders;
     }
 
     createFolder(userId: number, request: CreateWishlistFolderRequest): Promise<WishlistFolder> {

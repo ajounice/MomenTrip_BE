@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Form } from '@/modules/forms/entities';
 import { TagService } from '@/modules/tags/TagService';
 import { CommonService } from '@/modules/common/CommonService';
@@ -71,5 +71,11 @@ export class FormService {
         entity.user = user;
 
         return this.formRepository.save(entity);
+    }
+
+    public async getThumbnailByIds(ids: number[]): Promise<string[]> {
+        const forms = await this.formRepository.find({ where: { id: In(ids) } });
+
+        return forms.map((form) => form.thumbnail);
     }
 }
