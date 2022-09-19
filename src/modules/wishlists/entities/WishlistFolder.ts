@@ -24,4 +24,6 @@ export class WishlistFolder {
 
         return folder;
     }
+
+    images?: string[];
 }
