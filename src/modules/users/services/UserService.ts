@@ -11,16 +11,22 @@ export class UserService {
     ) {}
 
     //닉네임 중복 검사
-    async findNickname(nickname: string): Promise<boolean> {
+    async checkNickname(nickname: string): Promise<boolean> {
         const count = await this.userRepository.count({ where: { nickname: nickname } });
-        if (count) {
-            return true;
-        }
-        return false;
+
+        return !!count;
     }
 
     //탈퇴
     async deleteUser(id: number) {
         await this.userRepository.delete({ id: id });
+    }
+
+    public findById(id: number): Promise<User> {
+        return this.userRepository.findOne({ where: { id } });
+    }
+
+    public findByNickname(nickname: string): Promise<User> {
+        return this.userRepository.findOne({ where: { nickname } });
     }
 }

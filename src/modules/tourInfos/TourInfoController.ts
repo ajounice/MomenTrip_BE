@@ -1,9 +1,11 @@
-import { Controller, Get, Param, Post, Body, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Patch, Delete, UseGuards } from '@nestjs/common';
 import { TourInfoLikeService, TourInfoService } from '@/modules/tourInfos/services';
 import { BadRequestException, NotFoundException } from '@/common/exceptions';
 import { TourInfoCommentService } from '@/modules/tourInfos/services/TourInfoCommentService';
 import { SaveTourInfoCommentRequest, UpdateTourInfoCommentRequest } from '@/modules/tourInfos/dto';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('tourInfo')
 export class TourInfoController {
     constructor(

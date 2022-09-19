@@ -12,6 +12,7 @@ import { TagModule } from '@/modules/tags/TagModule';
 import { LoggerMiddleware } from '@/common/middlewares';
 import { CommonModule } from '@/modules/common/CommonModule';
 import { SearchModule } from '@/modules/search/SearchModule';
+import { WishlistModule } from '@/modules/wishlists/WishlistModule';
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import { SearchModule } from '@/modules/search/SearchModule';
         TourInfoModule,
         AuthModule,
         CommonModule,
+        WishlistModule,
         SearchModule,
     ],
     controllers: [],
