@@ -53,12 +53,13 @@ export class UserProfileService {
 
     public async getUserProfile(id: number) {
         const info = await this.userRepository.findOne({
-            select: ['nickname', 'name', 'intro', 'type', 'image'],
             where: { id },
             relations: ['forms', 'forms.tags'],
         });
 
         info.badgeList = this.getBadgeCount(info);
+
+        delete info.password;
 
         return info;
     }
