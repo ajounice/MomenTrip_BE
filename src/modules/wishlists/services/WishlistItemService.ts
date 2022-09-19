@@ -46,7 +46,6 @@ export class WishlistItemService {
         if (!item) {
             throw new NotFoundException();
         }
-
         if (item.type == 'TOUR') {
             return await this.tourInfoService.findById(item.targetId);
         } else if (item.type == 'FORM') {
@@ -62,12 +61,11 @@ export class WishlistItemService {
             throw new ForbiddenException();
         }
         return this.wishlistItemRepository.find({
-            where: { wishlistFolder: { id: folderId } }
+            where: { wishlistFolder: { id: folderId } },
         });
     }
 
     async deleteWishlistItem(userId: number, folderId: number, wishId: number) {
-
         const wishlist = await this.wishlistItemRepository.findOne({
             where: { id: wishId, wishlistFolder: { id: folderId } },
             relations: ['wishlistFolder'],

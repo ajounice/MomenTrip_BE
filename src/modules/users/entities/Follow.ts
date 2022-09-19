@@ -1,20 +1,20 @@
 import { Entity, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 import { User } from '@/modules/users/entities/User';
 
-@Entity({ name: 'followings' })
-export class Following {
+@Entity({ name: 'follows' })
+export class Follow {
     @PrimaryGeneratedColumn({ unsigned: true })
     id!: number;
 
     @ManyToOne(() => User, (user) => user.followers)
-    follower!: User;
+    follower!: User; //팔로우 주체
 
     @ManyToOne(() => User, (user) => user.followings)
-    following!: User;
+    following!: User; //팔로우 대상
 
-    @RelationId((following: Following) => following.follower)
+    @RelationId((follow: Follow) => follow.follower)
     followerId!: number;
 
-    @RelationId((following: Following) => following.following)
+    @RelationId((follow: Follow) => follow.following)
     followingId!: number;
 }

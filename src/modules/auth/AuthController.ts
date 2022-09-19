@@ -8,6 +8,13 @@ import { User } from '@/modules/users/entities';
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
+    @Get('/email/duplicate')
+    async checkEmail(@Body('email') email: string) {
+        const isDuplicated = await this.authService.checkEmail(email);
+
+        return isDuplicated;
+    }
+
     @Get('/kakao')
     @UseGuards(AuthGuard('kakao'))
     async kakaoLogin() {

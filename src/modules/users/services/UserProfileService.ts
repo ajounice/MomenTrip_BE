@@ -52,53 +52,38 @@ export class UserProfileService {
         return data;
     }
 
-    async getUserProfileById(id: number) {
-        const user = await this.userRepository.findOne({
+    public async getUserProfile(id: number) {
+        const info = await this.userRepository.findOne({
+            select: ['nickname', 'name', 'intro', 'type', 'image'],
             where: { id },
-            relations: ['forms', 'forms.tags'],
         });
 
-        if (!user) {
-            throw new NotFoundException();
-        }
+        info.badgeList = this.getBadgeCount(info);
 
-        user.badgeList = this.getBadgeCount(user);
-
-        return user;
-    }
-
-    async getUserProfile(nickname: string) {
-        const user = await this.userRepository.findOne({
-            where: { nickname },
-            relations: ['forms', 'forms.tags'],
-        });
-        if (!user) {
-            throw new NotFoundException();
-        }
-
-        user.badgeList = this.getBadgeCount(user);
-        return user;
+        return info;
     }
 
     async createUserProfile(id: number, createUserInfoDto: CreateUserInfoDto) {
-        const isDuplicated = await this.userService.findNickname(createUserInfoDto.nickname);
+        const isDuplicated = await this.userService.checkNickname(createUserInfoDto.nickname);
         if (isDuplicated) {
-            console.log('duplicated nickname');
+            //중복
             throw new BadRequestException();
-        } else {
-            await this.userRepository.update(id, createUserInfoDto);
-            return this.getUserProfileById(id);
         }
+
+        await this.userRepository.update(id, createUserInfoDto);
+
+        return this.getUserProfile(id);
     }
 
     async updateUserProfile(id: number, updateUserInfoDto: UpdateUserInfoDto) {
-        const isDuplicated = await this.userService.findNickname(updateUserInfoDto.nickname);
-        if (isDuplicated) {
-            throw new BadRequestException();
-        } else {
-            await this.userRepository.update(id, updateUserInfoDto);
-            return this.getUserProfileById(id);
+        if (updateUserInfoDto.nickname !== undefined) {
+            const isDuplicated = await this.userService.checkNickname(updateUserInfoDto.nickname);
+            if (isDuplicated) {
+                throw new BadRequestException();
+            }
         }
+        await this.userRepository.update(id, updateUserInfoDto);
+        return this.getUserProfile(id);
     }
 
     async updateProfileImage(id: number, file: Express.Multer.File) {

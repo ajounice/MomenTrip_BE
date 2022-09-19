@@ -22,6 +22,12 @@ export class AuthService {
         }
     }
 
+    async checkEmail(email: string): Promise<boolean> {
+        const count = await this.userRepository.count({ where: { email } });
+
+        return !!count;
+    }
+
     async kakaoLogin(userKakaoDto: UserKakaoDto): Promise<{ accessToken: string }> {
         const { name, email, image } = userKakaoDto;
         let user = await this.userRepository.findOne({
