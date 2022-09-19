@@ -25,7 +25,7 @@ export class WishlistItemService {
         }
         const { type, targetId } = request;
         const isDuplicated = await this.wishlistItemRepository.count({
-            where: { type: type, targetId: targetId, wishlistFolder: { id: targetId } },
+            where: { type: type, targetId: targetId, wishlistFolder: { id: folderId } },
         });
         if (isDuplicated) {
             throw new ForbiddenException();
