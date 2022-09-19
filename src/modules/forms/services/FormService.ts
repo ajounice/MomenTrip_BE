@@ -37,7 +37,7 @@ export class FormService {
 
         const { path: thumbnailPath } = await this.commonService.uploadThumbnail(video);
 
-        const path = await this.commonService.upload(video, 'videos');
+        const { path: convertedVideoPath } = await this.commonService.convert(video);
 
         const info = await this.tourInfoService.findByName(body.site);
 
@@ -64,7 +64,7 @@ export class FormService {
             }
         }
 
-        entity.video = path;
+        entity.video = convertedVideoPath;
 
         entity.thumbnail = thumbnailPath;
 

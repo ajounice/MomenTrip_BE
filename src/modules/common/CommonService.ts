@@ -41,4 +41,34 @@ export class CommonService {
 
         return thumbnailPath;
     }
+
+    async convert(video: Express.Multer.File) {
+        const tmpPath = './tmp/tmpVideo';
+
+        const isExist = fs.existsSync('./tmp');
+
+        if (!isExist) {
+            fs.mkdirSync('./tmp');
+        }
+
+        fs.writeFileSync(tmpPath, video.buffer);
+
+        const convertedVideo = await this.videoConverter.convertToH264(tmpPath, video);
+
+        console.log(fs.readdirSync('./tmp'));
+
+        const convertedVideoBuffer = fs.readFileSync(convertedVideo);
+
+        const videoPath = await this.fileStorage.upload('videos', {
+            buffer: convertedVideoBuffer,
+            mimetype: 'video/mp4',
+        });
+
+        fs.rmSync(tmpPath);
+        fs.rmSync(convertedVideo);
+
+        fs.rmdirSync('./tmp');
+
+        return videoPath;
+    }
 }
