@@ -28,9 +28,11 @@ export class UserFollowService {
         if (follower.id === followed.id) {
             throw new BadRequestException();
         }
+
         const isFollowed = await this.followRepository.count({
-            where: { follower: follower, following: followed },
+            where: { follower: { id: userId }, following: { nickname: otherUser } },
         });
+
         if (isFollowed) {
             throw new BadRequestException();
         }
@@ -55,8 +57,9 @@ export class UserFollowService {
         }
 
         const follow = await this.followRepository.findOne({
-            where: { follower: follower, following: followed },
+            where: { follower: { id: userId }, following: { nickname: otherUser } },
         });
+
 
         if (!follow) {
             throw new BadRequestException();
@@ -83,7 +86,7 @@ export class UserFollowService {
         return users;
     }
 
-    async checkFollowing(userId: number, otherUser: string): Promise<boolean> {
+    async checkFollowing(userId: number, otherUser: string) {
         //대상 존재 체크
         const isProvided = await this.userService.checkNickname(otherUser);
         if (!isProvided) {
@@ -97,7 +100,7 @@ export class UserFollowService {
         }
 
         const following = await this.followRepository.findOne({
-            where: { follower: follower, following: followed },
+            where: { follower: { id: userId }, following: { nickname: otherUser } },
         });
 
         if (following) {
@@ -106,7 +109,7 @@ export class UserFollowService {
         return false;
     }
 
-    async checkFollower(userId: number, otherUser: string): Promise<boolean> {
+    async checkFollower(userId: number, otherUser: string) {
         //대상 존재 체크
         const isProvided = await this.userService.checkNickname(otherUser);
         if (!isProvided) {
@@ -121,7 +124,7 @@ export class UserFollowService {
         }
 
         const following = await this.followRepository.findOne({
-            where: { follower: follower, following: followed },
+            where: { follower: { nickname: otherUser }, following: { id: userId } },
         });
 
         if (following) {
