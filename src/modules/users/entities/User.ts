@@ -1,27 +1,34 @@
 import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Badge } from '@/modules/users/entities/Badge';
-import { Following } from '@/modules/users/entities/Following';
+import { Follow } from '@/modules/users/entities/Follow';
 import { UserStatistics } from '@/modules/users/entities/UserStatistics';
-import { Wishlist } from '@/modules/wishlists/entities/Wishlist';
+import { WishlistFolder } from '@/modules/wishlists/entities';
+import { Form } from '@/modules/forms/entities';
 
 @Entity({ name: 'users' })
 export class User {
     @PrimaryGeneratedColumn({ unsigned: true })
-    id!: number;
+    id!: number; //kakao id
 
-    @Column({ unique: true, nullable: false })
-    nickname!: string;
-
-    @Column({ unique: true, nullable: false })
+    @Column({ unique: true, nullable: true })
     email!: string;
 
-    @Column({ nullable: false })
+    @Column({ unique: true, nullable: true })
+    nickname!: string;
+
+    @Column({ nullable: true })
+    password!: string;
+
+    @Column({ nullable: true })
     name!: string;
+
+    @Column({ nullable: true, default: null })
+    intro!: string;
 
     @Column({ nullable: false, default: false })
     type!: boolean;
 
-    @Column()
+    @Column({ nullable: true })
     image!: string;
 
     @OneToOne(() => UserStatistics, (statistics) => statistics.user, { onDelete: 'CASCADE' })
@@ -30,12 +37,17 @@ export class User {
     @OneToMany(() => Badge, (badge) => badge.user)
     badges!: Badge[];
 
-    @OneToMany(() => Following, (following) => following.follower)
-    followers!: Following[];
+    @OneToMany(() => Follow, (follow) => follow.follower)
+    followers!: Follow[]; //유저를 팔로우
 
-    @OneToMany(() => Following, (following) => following.following)
-    followings!: Following[];
+    @OneToMany(() => Follow, (follow) => follow.following)
+    followings!: Follow[]; //유저가 팔로우 (대상)
 
-    @OneToMany(() => Wishlist, (wishlist) => wishlist.user, { onDelete: 'CASCADE' })
-    wishlists!: Wishlist[];
+    @OneToMany(() => WishlistFolder, (wishlistFolder) => wishlistFolder.user)
+    wishlistFolders!: WishlistFolder[];
+
+    @OneToMany(() => Form, (form) => form.user, { onDelete: 'SET NULL' })
+    forms!: Form[];
+
+    badgeList?: any[];
 }

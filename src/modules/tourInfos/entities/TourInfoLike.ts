@@ -12,4 +12,16 @@ export class TourInfoLike {
 
     @ManyToOne(() => TourInfo)
     tourInfo!: TourInfo;
+
+    static from(userId: number, infoId: number) {
+        const like = new TourInfoLike();
+
+        like.tourInfo = new TourInfo();
+        like.user = new User();
+
+        like.tourInfo.id = infoId;
+        like.user.id = userId;
+
+        return like;
+    }
 }

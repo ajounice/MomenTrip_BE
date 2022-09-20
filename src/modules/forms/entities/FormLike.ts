@@ -12,4 +12,16 @@ export class FormLike {
 
     @ManyToOne(() => Form)
     form!: Form;
+
+    static from(userId: number, formId: number) {
+        const like = new FormLike();
+
+        like.form = new Form();
+        like.user = new User();
+
+        like.form.id = formId;
+        like.user.id = userId;
+
+        return like;
+    }
 }

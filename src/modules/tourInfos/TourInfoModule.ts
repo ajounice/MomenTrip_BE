@@ -1,9 +1,21 @@
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 import { TourInfoController } from './TourInfoController';
-import { TourInfoService } from './TourInfoService';
+import { TourInfoService, TourInfoLikeService, TourInfoCommentService } from './services';
+import { TourInfo, TourInfoComment, TourInfoLike } from '@/modules/tourInfos/entities';
+import { HttpModule } from '@nestjs/axios';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
+    imports: [
+        TypeOrmModule.forFeature([TourInfo, TourInfoLike, TourInfoComment]),
+        HttpModule.register({
+            timeout: 5000,
+        }),
+        ConfigModule,
+    ],
     controllers: [TourInfoController],
-    providers: [TourInfoService],
+    providers: [TourInfoService, TourInfoLikeService, TourInfoCommentService],
+    exports: [TourInfoService, TourInfoLikeService, TourInfoCommentService, TypeOrmModule],
 })
 export class TourInfoModule {}

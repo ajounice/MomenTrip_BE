@@ -4,8 +4,10 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Form, FormComment, FormLike } from '@/modules/forms/entities';
 import { TourInfo, TourInfoLike, TourInfoComment } from '@/modules/tourInfos/entities';
-import { User, UserStatistics, Badge, Following } from '@/modules/users/entities';
-import { Wishlist } from '@/modules/wishlists/entities/Wishlist';
+import { User, UserStatistics, Badge, Follow } from '@/modules/users/entities';
+import { Tag } from '@/modules/tags/entities/Tag';
+import { WishlistItem } from '@/modules/wishlists/entities/WishlistItem';
+import { WishlistFolder } from '@/modules/wishlists/entities';
 
 @Injectable()
 export class DatabaseConfigService implements TypeOrmOptionsFactory {
@@ -16,14 +18,16 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
             User,
             UserStatistics,
             Badge,
-            Following,
+            Follow,
             Form,
             FormComment,
             FormLike,
             TourInfo,
             TourInfoLike,
             TourInfoComment,
-            Wishlist,
+            WishlistItem,
+            WishlistFolder,
+            Tag,
         ];
     }
 
@@ -39,6 +43,7 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
             namingStrategy: new SnakeNamingStrategy(),
             logging: this.configService.get<string>('NODE_ENV') !== 'production',
             synchronize: this.configService.get<string>('NODE_ENV') !== 'production',
+            legacySpatialSupport: false,
         };
     }
 }
