@@ -20,7 +20,22 @@ export class UserProfileService {
         private readonly userService: UserService,
     ) {}
 
-    private tagList = ['sea', 'mountain', 'hotel', 'camping', 'activity', 'festival', 'night'];
+    private tagList = [
+        'sea',
+        'mountain',
+        'hotel',
+        'camping',
+        'activity',
+        'festival',
+        'night',
+        '바다',
+        '산',
+        '숙소',
+        '캠핑',
+        '액티비티',
+        '축제',
+        '야경',
+    ];
 
     private getBadgeCount(user: User): IBadgeCount[] {
         let total = 0;
@@ -28,13 +43,21 @@ export class UserProfileService {
 
         user.forms.forEach((form) => {
             for (const tag of form.tags) {
-                if (this.tagList.includes(tag.name)) {
-                    if (tags.has(tag.name)) {
-                        tags.set(tag.name, tags.get(tag.name) + 1);
+                const idx = this.tagList.findIndex((item) => tag.name === item);
+                if (idx !== -1) {
+                    if (tags.has(this.tagList[idx % 7])) {
+                        tags.set(this.tagList[idx % 7], tags.get(this.tagList[idx % 7]) + 1);
                     } else {
-                        tags.set(tag.name, 1);
+                        tags.set(this.tagList[idx % 7], 1);
                     }
                 }
+                // if (this.tagList.includes(tag.name)) {
+                //     if (tags.has(tag.name)) {
+                //         tags.set(tag.name, tags.get(tag.name) + 1);
+                //     } else {
+                //         tags.set(tag.name, 1);
+                //     }
+                // }
             }
         });
 
