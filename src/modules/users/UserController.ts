@@ -61,7 +61,7 @@ export class UserController {
     }
 
     //닉네임 중복 검사
-    @Get('my/edit/nickname/duplicate')
+    @Post('my/edit/nickname/duplicate')
     async checkNickname(@Body('nickname') nickname: string) {
         const isDuplicated = await this.userService.checkNickname(nickname);
         return isDuplicated;
@@ -162,6 +162,4 @@ export class UserController {
     async getFollowingList(@Param('nickname') nickname: string) {
         return this.userFollowService.getAllFollowing(nickname);
     }
-
-
 }
