@@ -151,6 +151,13 @@ export class UserController {
         return this.userFollowService.getAllFollowing(nickname);
     }
 
+    //팔로워 삭제
+    @Delete('/my/followers/:nickname')
+    async deleteFollower(@Req() req, @Param('nickname') nickname: string) {
+        const { id } = req.user;
+        return this.userFollowService.deleteFollower(id, nickname);
+    }
+
     //다른 유저의 팔로워 리스트 -유저가 대상(Follow-following)
     @Get('/:nickname/followers')
     async getFollowerList(@Param('nickname') nickname: string) {

@@ -60,7 +60,6 @@ export class UserFollowService {
             where: { follower: { id: userId }, following: { nickname: otherUser } },
         });
 
-
         if (!follow) {
             throw new BadRequestException();
         }
@@ -131,5 +130,17 @@ export class UserFollowService {
             return true;
         }
         return false;
+    }
+
+    async deleteFollower(id: number, nickname: string) {
+        const follow = await this.followRepository.findOne({
+            where: { follower: { nickname }, following: { id } },
+        });
+
+        if (!follow) {
+            throw new BadRequestException();
+        }
+
+        return await this.followRepository.remove(follow);
     }
 }
