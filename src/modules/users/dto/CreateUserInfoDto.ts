@@ -3,13 +3,13 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class CreateUserInfoDto {
     @IsNotEmpty()
     @IsString()
-    nickname!: string;
+    nickname: string;
 
     @IsOptional()
     @IsString()
-    name?: string;
+    name: string;
 
     @IsOptional()
     @IsString()
-    intro?: string;
+    intro: string;
 }
