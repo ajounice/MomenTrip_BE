@@ -75,7 +75,7 @@ export class UserProfileService {
         return data;
     }
 
-    public async getUserProfile(id: number) {
+    public async getProfile(id: number) {
         const info = await this.userRepository.findOne({
             where: { id },
             relations: ['forms', 'forms.tags'],
@@ -88,7 +88,7 @@ export class UserProfileService {
         return info;
     }
 
-    async createUserProfile(id: number, createUserInfoDto: CreateUserInfoDto) {
+    async createProfile(id: number, createUserInfoDto: CreateUserInfoDto) {
         const isDuplicated = await this.userService.checkNickname(createUserInfoDto.nickname);
         if (isDuplicated) {
             //중복
@@ -96,10 +96,10 @@ export class UserProfileService {
         }
         await this.userRepository.update(id, createUserInfoDto);
 
-        return this.getUserProfile(id);
+        return this.getProfile(id);
     }
 
-    async updateUserProfile(id: number, updateUserInfoDto: UpdateUserInfoDto) {
+    async updateProfile(id: number, updateUserInfoDto: UpdateUserInfoDto) {
         if (updateUserInfoDto.nickname) {
             const isDuplicated = await this.userService.checkNickname(updateUserInfoDto.nickname);
             if (isDuplicated) {
@@ -107,7 +107,7 @@ export class UserProfileService {
             }
         }
         await this.userRepository.update(id, updateUserInfoDto);
-        return this.getUserProfile(id);
+        return this.getProfile(id);
     }
 
     async updateProfileImage(id: number, file: Express.Multer.File) {
