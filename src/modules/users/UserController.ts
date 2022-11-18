@@ -1,5 +1,4 @@
 import {
-    BadRequestException,
     Body,
     Controller,
     Delete,
@@ -14,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { UserService, UserProfileService, UserFollowService } from '@/modules/users/services';
 import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
-import { NotFoundException } from '@/common/exceptions';
+import { NotFoundException, BadRequestException } from '@/common/exceptions';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -32,20 +31,14 @@ export class UserController {
     async getMyProfile(@Req() req) {
         const { id } = req.user;
         const info = await this.userProfileService.getUserProfile(id);
-        if (!info) {
-            throw new NotFoundException();
-        }
         return info;
     }
 
     //프로필 확인(타인)
     @Get('/:nickname')
-    async getProfile(@Param('nickname') nickname: string) {
+    async getOtherProfile(@Param('nickname') nickname: string) {
         const user = await this.userService.findByNickname(nickname);
         const info = await this.userProfileService.getUserProfile(user.id);
-        if (!info) {
-            throw new NotFoundException();
-        }
         return info;
     }
 
@@ -54,26 +47,24 @@ export class UserController {
     async getUserProfile(@Req() req) {
         const { id } = req.user;
         const info = await this.userProfileService.getUserProfile(id);
-        if (!info) {
-            throw new BadRequestException();
-        }
+        delete info.badgeList;
+        delete info.forms;
         return info;
     }
 
     //닉네임 중복 검사
     @Post('my/edit/nickname/duplicate')
     async checkNickname(@Body('nickname') nickname: string) {
+        if (!nickname) {
+            throw new BadRequestException();
+        }
         const isDuplicated = await this.userService.checkNickname(nickname);
         return isDuplicated;
     }
 
     //프로필 수정 - 최초(닉네임 필수)
     @Patch('my/edit')
-    async createUserProfile(
-        @Req() req,
-        @Body() nickname: string,
-        @Body() createUserInfoDto: CreateUserInfoDto,
-    ) {
+    async createUserProfile(@Req() req, @Body() createUserInfoDto: CreateUserInfoDto) {
         const { id } = req.user;
         const createdInfo = await this.userProfileService.createUserProfile(id, createUserInfoDto);
         if (!createUserInfoDto) {
@@ -153,13 +144,13 @@ export class UserController {
 
     //다른 유저의 팔로워 리스트 -유저가 대상(Follow-following)
     @Get('/:nickname/followers')
-    async getFollowerList(@Param('nickname') nickname: string) {
+    async getOtherFollowerList(@Param('nickname') nickname: string) {
         return this.userFollowService.getAllFollower(nickname);
     }
 
     //다른 유저의 팔로잉 리스트 - 유저가 주체(Follow-follower)
     @Get('/:nickname/followings')
-    async getFollowingList(@Param('nickname') nickname: string) {
+    async getOtherFollowingList(@Param('nickname') nickname: string) {
         return this.userFollowService.getAllFollowing(nickname);
     }
 }

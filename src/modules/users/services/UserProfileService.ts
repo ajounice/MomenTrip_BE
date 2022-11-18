@@ -2,9 +2,10 @@ import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CommonService } from '@/modules/common/CommonService';
 import { UserService } from '@/modules/users/services/UserService';
+import { BadRequestException, NotFoundException } from '@/common/exceptions';
 
 export interface IBadgeCount {
     name: string;
@@ -79,11 +80,11 @@ export class UserProfileService {
             where: { id },
             relations: ['forms', 'forms.tags'],
         });
-
+        if (!info) {
+            throw new NotFoundException();
+        }
         info.badgeList = this.getBadgeCount(info);
-
         delete info.password;
-
         return info;
     }
 
@@ -93,14 +94,13 @@ export class UserProfileService {
             //중복
             throw new BadRequestException();
         }
-
         await this.userRepository.update(id, createUserInfoDto);
 
         return this.getUserProfile(id);
     }
 
     async updateUserProfile(id: number, updateUserInfoDto: UpdateUserInfoDto) {
-        if (updateUserInfoDto.nickname !== undefined) {
+        if (updateUserInfoDto.nickname) {
             const isDuplicated = await this.userService.checkNickname(updateUserInfoDto.nickname);
             if (isDuplicated) {
                 throw new BadRequestException();
