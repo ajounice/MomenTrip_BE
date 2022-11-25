@@ -2,7 +2,8 @@ import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './AuthService';
 import { CreateUserDto, UserKakaoDto } from '@/modules/auth/dto';
-import { User } from '@/modules/users/entities';
+import { AccessTokenResponse, CheckEmailResponse } from '@/modules/auth/dto/response';
+import { UserResponse } from '@/modules/users/dto/response';
 
 @Controller('auth')
 export class AuthController {
@@ -12,7 +13,7 @@ export class AuthController {
     async checkEmail(@Body('email') email: string) {
         const isDuplicated = await this.authService.checkEmail(email);
 
-        return isDuplicated;
+        return new CheckEmailResponse(isDuplicated);
     }
 
     @Get('/kakao')
@@ -24,19 +25,25 @@ export class AuthController {
     @Get('/kakao/callback')
     @UseGuards(AuthGuard('kakao'))
     async kakaoLoginCallback(@Req() req): Promise<{ accessToken: string }> {
-        return this.authService.kakaoLogin(req.user as UserKakaoDto);
+        const { accessToken } = await this.authService.kakaoLogin(req.user as UserKakaoDto);
+
+        return new AccessTokenResponse(accessToken);
     }
 
     //로컬 로그인
     @Post('/login')
     @UseGuards(AuthGuard('local'))
     async localLogin(@Req() req): Promise<{ accessToken: string }> {
-        return this.authService.localLogin(req.user);
+        const { accessToken } = await this.authService.localLogin(req.user);
+
+        return new AccessTokenResponse(accessToken);
     }
 
     //로컬 회원가입(유저생성)
     @Post('/signup')
-    async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-        return await this.authService.createUser(createUserDto);
+    async create(@Body() createUserDto: CreateUserDto): Promise<UserResponse> {
+        const user = await this.authService.createUser(createUserDto);
+
+        return new UserResponse(user);
     }
 }
