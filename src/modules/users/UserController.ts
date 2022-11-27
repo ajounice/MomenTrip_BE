@@ -104,14 +104,14 @@ export class UserController {
     @Post('/:nickname/follow')
     async follow(@Req() req, @Param('nickname') user: string) {
         const { id } = req.user;
-        return await this.userFollowService.followOrNot(id, user);
+        return await this.userFollowService.toggleFollow(id, user);
     }
 
     //언팔로우
     @Delete('/:nickname/unfollow')
     async unFollow(@Req() req, @Param('nickname') user: string) {
         const { id } = req.user;
-        return await this.userFollowService.followOrNot(id, user);
+        return await this.userFollowService.toggleFollow(id, user);
     }
 
     //팔로잉 상태

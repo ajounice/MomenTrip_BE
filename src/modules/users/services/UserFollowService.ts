@@ -17,7 +17,7 @@ export class UserFollowService {
     ) {}
 
     //팔로우 or 언팔로우
-    async followOrNot(myId: number, userNickname: string) {
+    async toggleFollow(myId: number, userNickname: string) {
         const isExist = await this.userService.checkNickname(userNickname);
         if (!isExist) {
             throw new NotFoundException();
