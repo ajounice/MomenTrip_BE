@@ -1,5 +1,5 @@
 export * from './UserResponse';
-export * from './UserProfileResponse';
+export * from './UserInfoResponse';
 export * from './UserProfileImageResponse';
 export * from './FollowResponse';
 export * from './IsFollowingResponse';

@@ -19,7 +19,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
     UserProfileImageResponse,
-    UserProfileResponse,
+    UserInfoResponse,
     FollowResponse,
     IsFollowingResponse,
     UserListResponse,
@@ -86,7 +86,7 @@ export class UserController {
         if (!createUserInfoDto) {
             throw new BadRequestException();
         }
-        return new UserProfileResponse(createdInfo);
+        return new UserInfoResponse(createdInfo);
     }
 
     //프로필 수정 - 최초x
@@ -98,7 +98,7 @@ export class UserController {
             throw new BadRequestException();
         }
 
-        return new UserProfileResponse(updatedInfo);
+        return new UserInfoResponse(updatedInfo);
     }
 
     @Patch('/my/edit/image')

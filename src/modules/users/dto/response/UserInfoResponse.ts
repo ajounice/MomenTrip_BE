@@ -1,6 +1,6 @@
 import { User } from '@/modules/users/entities';
 
-export class UserProfileResponse {
+export class UserInfoResponse {
     public id: number;
 
     public email: string;
