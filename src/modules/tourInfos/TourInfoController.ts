@@ -4,6 +4,12 @@ import { BadRequestException, NotFoundException } from '@/common/exceptions';
 import { TourInfoCommentService } from '@/modules/tourInfos/services/TourInfoCommentService';
 import { SaveTourInfoCommentRequest, UpdateTourInfoCommentRequest } from '@/modules/tourInfos/dto';
 import { AuthGuard } from '@nestjs/passport';
+import {
+    TourInfoCommentListResponse,
+    TourInfoCommentResponse,
+    TourInfoListResponse,
+    TourInfoResponse,
+} from '@/modules/tourInfos/dto/response';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('tourInfo')
@@ -15,8 +21,10 @@ export class TourInfoController {
     ) {}
 
     @Get('/')
-    getAllTourInfo() {
-        return this.tourInfoService.getAll();
+    async getAllTourInfo() {
+        const list = await this.tourInfoService.getAll();
+
+        return new TourInfoListResponse(list);
     }
 
     @Get('/:id')
@@ -25,7 +33,7 @@ export class TourInfoController {
         if (!info) {
             throw new NotFoundException();
         }
-        return info;
+        return new TourInfoResponse(info);
     }
 
     @Post('/:id/like')
@@ -38,12 +46,14 @@ export class TourInfoController {
             throw new BadRequestException();
         }
 
-        return likeResult;
+        return { status: likeResult };
     }
 
     @Get('/:id/comments')
     async getCommentsByInfoId(@Param('id') id: number) {
-        return this.tourInfoCommentService.getCommentsByInfoId(id);
+        const result = await this.tourInfoCommentService.getCommentsByInfoId(id);
+
+        return new TourInfoCommentListResponse(result);
     }
 
     @Post('/:id/comments')
@@ -58,13 +68,13 @@ export class TourInfoController {
         request = new SaveTourInfoCommentRequest();
         request.content = content;
 
-        const comment = await this.tourInfoCommentService.saveComment(id, user.id, request);
+        const result = await this.tourInfoCommentService.saveComment(id, user.id, request);
 
-        if (!comment) {
+        if (!result) {
             throw new BadRequestException();
         }
 
-        return comment;
+        return new TourInfoCommentResponse(result);
     }
 
     @Patch('/comments/:commentId')
@@ -74,29 +84,25 @@ export class TourInfoController {
     ) {
         const user = { id: 1 };
 
-        const updatedComment = await this.tourInfoCommentService.updateComment(
-            commentId,
-            user.id,
-            request,
-        );
+        const result = await this.tourInfoCommentService.updateComment(commentId, user.id, request);
 
-        if (!updatedComment) {
+        if (!result) {
             throw new BadRequestException();
         }
 
-        return updatedComment;
+        return new TourInfoCommentResponse(result);
     }
 
     @Delete('/comments/:commentId')
     async deleteTourInfoComment(@Param('commentId') commentId: number) {
         const user = { id: 1 };
 
-        const deletedComment = await this.tourInfoCommentService.deleteComment(commentId, user.id);
+        const result = await this.tourInfoCommentService.deleteComment(commentId, user.id);
 
-        if (!deletedComment) {
+        if (!result) {
             throw new BadRequestException();
         }
 
-        return deletedComment;
+        return new TourInfoCommentResponse(result);
     }
 }
