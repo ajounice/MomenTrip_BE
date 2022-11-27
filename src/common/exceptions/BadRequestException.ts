@@ -1,7 +1,10 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class BadRequestException extends HttpException {
-    constructor() {
-        super('Bad Request', HttpStatus.BAD_REQUEST);
+    constructor(objectOrError?: string | object | any, description?: string) {
+        super(
+            HttpException.createBody(objectOrError, description, HttpStatus.BAD_REQUEST),
+            HttpStatus.BAD_REQUEST,
+        );
     }
 }
