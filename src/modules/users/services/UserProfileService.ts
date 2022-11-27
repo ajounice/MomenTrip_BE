@@ -1,4 +1,4 @@
-import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
+import { CreateUserInfoRequest, UpdateUserInfoRequest } from '@/modules/users/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
@@ -87,7 +87,7 @@ export class UserProfileService {
         return info;
     }
 
-    async createUserProfile(id: number, createUserInfoDto: CreateUserInfoDto) {
+    async createUserProfile(id: number, createUserInfoDto: CreateUserInfoRequest) {
         const isDuplicated = await this.userService.checkNickname(createUserInfoDto.nickname);
         if (isDuplicated) {
             //중복
@@ -99,7 +99,7 @@ export class UserProfileService {
         return this.getUserProfile(id);
     }
 
-    async updateUserProfile(id: number, updateUserInfoDto: UpdateUserInfoDto) {
+    async updateUserProfile(id: number, updateUserInfoDto: UpdateUserInfoRequest) {
         if (updateUserInfoDto.nickname !== undefined) {
             const isDuplicated = await this.userService.checkNickname(updateUserInfoDto.nickname);
             if (isDuplicated) {
