@@ -16,14 +16,6 @@ export class WishlistFolder {
     @OneToMany(() => WishlistItem, (wishlist) => wishlist.wishlistFolder, { onDelete: 'CASCADE' })
     wishlists!: WishlistItem[];
 
-    static from(userId: number): WishlistFolder {
-        const folder = new WishlistFolder();
-
-        folder.user = new User();
-        folder.user.id = userId;
-
-        return folder;
-    }
-
+    @Column()
     images?: string[];
 }

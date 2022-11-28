@@ -18,20 +18,27 @@ export class WishlistItemService {
         private readonly formService: FormService,
     ) {}
 
-    async createWishlistItem(userId: number, folderId: number, request: CreateWishlistItemRequest) {
+    async createWishlistItem(
+        userId: number,
+        folderId: number,
+        createWishlistItemRequest: CreateWishlistItemRequest,
+    ) {
         const isUser = this.wishlistFolderService.checkUser(userId, folderId);
         if (!isUser) {
             throw new ForbiddenException();
         }
-        const { type, targetId } = request;
+        const { type, targetId } = createWishlistItemRequest;
         const isDuplicated = await this.wishlistItemRepository.count({
             where: { type: type, targetId: targetId, wishlistFolder: { id: folderId } },
         });
         if (isDuplicated) {
-            throw new ForbiddenException();
+            throw new ForbiddenException('Duplicated wishlist item');
         }
-        const wishlist = request.toEntity(folderId);
-        return await this.wishlistItemRepository.save(wishlist);
+        const item = new WishlistItem();
+        item.targetId = targetId;
+        item.type = type;
+        item.wishlistFolder = await this.wishlistFolderService.findById(userId, folderId);
+        return await this.wishlistItemRepository.save(item);
     }
 
     async getWishlistItem(userId, folderId: number, wishId: number) {
@@ -44,14 +51,14 @@ export class WishlistItemService {
             where: { id: wishId, wishlistFolder: { id: folderId } },
         });
         if (!item) {
-            throw new NotFoundException();
+            throw new NotFoundException('해당 item 존재하지 않음');
         }
         if (item.type == 'TOUR') {
             return await this.tourInfoService.findById(item.targetId);
         } else if (item.type == 'FORM') {
             return await this.formService.findById(item.targetId);
         } else {
-            throw new BadRequestException();
+            throw new BadRequestException('type 구분 안됨');
         }
     }
 

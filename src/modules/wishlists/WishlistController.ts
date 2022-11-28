@@ -1,19 +1,14 @@
-import {
-    BadRequestException,
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Post,
-    Put,
-    Req,
-    UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { WishlistFolderService, WishlistItemService } from '@/modules/wishlists/services';
-import { CreateWishlistFolderRequest, CreateWishlistItemRequest } from '@/modules/wishlists/dtos';
+import {
+    CreateWishlistFolderRequest,
+    CreateWishlistItemRequest,
+    WishlistFolderResponse,
+    WishlistItemResponse,
+} from '@/modules/wishlists/dtos';
 import { WishlistItem } from '@/modules/wishlists/entities';
+import { BadRequestException } from '@/common/exceptions';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('wishlists')
@@ -24,31 +19,39 @@ export class WishlistController {
     ) {}
 
     @Get('/')
-    getAllFolder(@Req() req) {
-        return this.wishlistFolderService.getAllFolder(req.user.id);
+    getAllWishlistFolder(@Req() req) {
+        const { id } = req.user;
+        return this.wishlistFolderService.getAllFolder(id);
     }
 
     @Post('/new')
-    async createFolder(@Req() req, @Body() request: CreateWishlistFolderRequest) {
-        const folderName = request.name;
-        request = new CreateWishlistFolderRequest();
-        request.name = folderName;
-        const folder = await this.wishlistFolderService.createFolder(req.user.id, request);
+    async createWishlistFolder(
+        @Req() req,
+        @Body() createWishlistFolderRequest: CreateWishlistFolderRequest,
+    ) {
+        const { id } = req.user;
+        const folder = await this.wishlistFolderService.createFolder(
+            id,
+            createWishlistFolderRequest,
+        );
 
-        if (!folder) {
-            throw new BadRequestException();
-        }
-        return folder;
+        return new WishlistFolderResponse(folder);
     }
 
     @Delete('/:id')
-    async deleteFolder(@Req() req, @Param('id') folderId: number) {
-        await this.wishlistFolderService.deleteFolder(req.user.id, folderId);
+    async deleteWishlistFolder(@Req() req, @Param('id') folderId: number) {
+        const { id } = req.user;
+        const result = await this.wishlistFolderService.deleteFolder(id, folderId);
+        if (!result) {
+            throw new BadRequestException();
+        }
+        return new WishlistFolderResponse(result);
     }
 
     @Get('/:id')
-    getAllWishlist(@Req() req, @Param('id') folderId: number): Promise<WishlistItem[]> {
-        return this.wishlistItemService.getAllWishlistItem(req.user.id, folderId);
+    getAllWishlistItem(@Req() req, @Param('id') folderId: number): Promise<WishlistItem[]> {
+        const { id } = req.user;
+        return this.wishlistItemService.getAllWishlistItem(id, folderId);
     }
 
     @Post('/:id')
@@ -73,7 +76,7 @@ export class WishlistController {
     }
 
     @Delete('/:folderId/:wishId')
-    async deleteWishlist(
+    async deleteWishlistItem(
         @Req() req,
         @Param('folderId') folderId: number,
         @Param('wishId') wishId: number,
@@ -99,9 +102,6 @@ export class WishlistController {
         @Param('wishId') wishId: number,
     ) {
         const item = await this.wishlistItemService.getWishlistItem(req.user.id, folderId, wishId);
-        if (!item) {
-            throw new BadRequestException();
-        }
         return item;
     }
 }

@@ -6,7 +6,7 @@ import {
     CreateWishlistFolderRequest,
     CreateWishlistItemRequest,
 } from '@/modules/wishlists/dtos/requests';
-import { ForbiddenException, NotFoundException } from '@/common/exceptions';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@/common/exceptions';
 import { FormService } from '@/modules/forms/services';
 import { TourInfoService } from '@/modules/tourInfos/services';
 
@@ -25,6 +25,24 @@ export class WishlistFolderService {
         });
         if (user) {
             //유저의 wishlist folder가 맞을 시
+            return true;
+        }
+        return false;
+    }
+
+    public async findById(userId: number, folderId: number) {
+        const folder = await this.wishlistFolderRepository.findOne({
+            where: { user: { id: userId }, id: folderId },
+        });
+
+        return folder;
+    }
+
+    private async findByName(userId: number, name: string) {
+        const folder = await this.wishlistFolderRepository.count({
+            where: { name: name, user: { id: userId } },
+        });
+        if (folder) {
             return true;
         }
         return false;
@@ -53,20 +71,30 @@ export class WishlistFolderService {
         return folders;
     }
 
-    createFolder(userId: number, request: CreateWishlistFolderRequest): Promise<WishlistFolder> {
-        const folder = request.toEntity(userId);
-        return this.wishlistFolderRepository.save(folder);
+    async createFolder(
+        userId: number,
+        createWishlistFolderRequest: CreateWishlistFolderRequest,
+    ): Promise<WishlistFolder> {
+        const isDuplicated = await this.findByName(userId, createWishlistFolderRequest.name);
+        if (isDuplicated) {
+            //중복
+            throw new BadRequestException('Duplicated folder name');
+        }
+
+        const folder = new WishlistFolder();
+        folder.name = createWishlistFolderRequest.name;
+
+        return await this.wishlistFolderRepository.save(folder);
     }
 
     async deleteFolder(userId: number, folderId: number) {
         const folder = await this.wishlistFolderRepository.findOne({
             where: { user: { id: userId }, id: folderId },
-            relations: ['user'],
         });
 
         if (!folder) {
-            throw new NotFoundException();
+            throw new NotFoundException('Not exist folder');
         }
-        return this.wishlistFolderRepository.remove(folder);
+        return await this.wishlistFolderRepository.remove(folder);
     }
 }
