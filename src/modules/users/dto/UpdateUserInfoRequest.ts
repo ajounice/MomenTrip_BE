@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
-export class CreateUserInfoDto {
-    @IsNotEmpty()
+export class UpdateUserInfoRequest {
+    @IsOptional()
     @IsString()
     nickname: string;
 

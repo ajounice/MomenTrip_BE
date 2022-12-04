@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete,
@@ -12,10 +13,16 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 import { UserService, UserProfileService, UserFollowService } from '@/modules/users/services';
-import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
-import { BadRequestException } from '@/common/exceptions';
+import { CreateUserInfoRequest, UpdateUserInfoRequest } from '@/modules/users/dto';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
+import {
+    UserProfileImageResponse,
+    UserInfoResponse,
+    FollowResponse,
+    IsFollowingResponse,
+    UserListResponse,
+} from '@/modules/users/dto/response';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('users')
@@ -64,32 +71,37 @@ export class UserController {
 
     //프로필 수정 - 최초(닉네임 필수)
     @Patch('my/edit')
-    async createMyProfile(@Req() req, @Body() createUserInfoDto: CreateUserInfoDto) {
+    async createMyProfile(
+        @Req() req,
+        @Body() nickname: string,
+        @Body() createUserInfoDto: CreateUserInfoRequest,
+    ) {
         const { id } = req.user;
         const createdInfo = await this.userProfileService.createProfile(id, createUserInfoDto);
         if (!createUserInfoDto) {
             throw new BadRequestException();
         }
-        return createdInfo;
+        return new UserInfoResponse(createdInfo);
     }
 
     //프로필 수정 - 최초x
     @Patch('my/edit/update')
-    async updateMyProfile(@Req() req, @Body() updateUserInfoDto: UpdateUserInfoDto) {
+    async updateMyProfile(@Req() req, @Body() updateUserInfoDto: UpdateUserInfoRequest) {
         const { id } = req.user;
         const updatedInfo = await this.userProfileService.updateProfile(id, updateUserInfoDto);
         if (!updatedInfo) {
             throw new BadRequestException();
         }
 
-        return updatedInfo;
+        return new UserInfoResponse(updatedInfo);
     }
 
     @Patch('/my/edit/image')
     @UseInterceptors(FileInterceptor('profile_image'))
     async updateMyProfileImage(@Req() req, @UploadedFile() file: Express.Multer.File) {
         const { id } = req.user;
-        return await this.userProfileService.updateProfileImage(id, file);
+        const path = await this.userProfileService.updateProfileImage(id, file);
+        return new UserProfileImageResponse(path);
     }
     //계정 변환(일반계정<->비즈니스)
 
@@ -104,53 +116,71 @@ export class UserController {
     @Post('/:nickname/follow')
     async follow(@Req() req, @Param('nickname') user: string) {
         const { id } = req.user;
-        return await this.userFollowService.toggleFollow(id, user);
+        const result = await this.userFollowService.toggleFollow(id, user);
+
+        return new FollowResponse(result);
     }
 
     //언팔로우
     @Delete('/:nickname/unfollow')
     async unFollow(@Req() req, @Param('nickname') user: string) {
         const { id } = req.user;
-        return await this.userFollowService.toggleFollow(id, user);
+        const result = await this.userFollowService.toggleFollow(id, user);
+
+        return new FollowResponse(result);
     }
 
     //팔로잉 상태
     @Get('/:nickname/following')
     async checkFollowing(@Req() req, @Param('nickname') user: string) {
         const { id } = req.user;
-        return await this.userFollowService.checkFollowing(id, user);
+        const result = await this.userFollowService.checkFollowing(id, user);
+
+        return new IsFollowingResponse(result);
     }
 
     //팔로워 상태
     @Get('/:nickname/follower')
     async checkFollower(@Req() req, @Param('nickname') user: string) {
         const { id } = req.user;
-        return await this.userFollowService.checkFollower(id, user);
+        const result = await this.userFollowService.checkFollower(id, user);
+
+        return new IsFollowingResponse(result);
     }
 
     //나의 팔로워 리스트
     @Get('/my/followers')
     async getMyFollowerList(@Req() req) {
         const { nickname } = req.user;
-        return this.userFollowService.getAllFollower(nickname);
+
+        const result = await this.userFollowService.getAllFollower(nickname);
+
+        return new UserListResponse(result);
     }
 
     //나의 팔로잉 리스트
     @Get('/my/followings')
     async getMyFollowingList(@Req() req) {
         const { nickname } = req.user;
-        return this.userFollowService.getAllFollowing(nickname);
+
+        const result = await this.userFollowService.getAllFollowing(nickname);
+
+        return new UserListResponse(result);
     }
 
     //다른 유저의 팔로워 리스트 -유저가 대상(Follow-following)
     @Get('/:nickname/followers')
     async getFollowerList(@Param('nickname') nickname: string) {
-        return this.userFollowService.getAllFollower(nickname);
+        const result = await this.userFollowService.getAllFollower(nickname);
+
+        return new UserListResponse(result);
     }
 
     //다른 유저의 팔로잉 리스트 - 유저가 주체(Follow-follower)
     @Get('/:nickname/followings')
     async getFollowingList(@Param('nickname') nickname: string) {
-        return this.userFollowService.getAllFollowing(nickname);
+        const result = await this.userFollowService.getAllFollowing(nickname);
+
+        return new UserListResponse(result);
     }
 }

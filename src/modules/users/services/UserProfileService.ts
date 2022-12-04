@@ -1,4 +1,4 @@
-import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
+import { CreateUserInfoRequest, UpdateUserInfoRequest } from '@/modules/users/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
@@ -84,22 +84,25 @@ export class UserProfileService {
             throw new NotFoundException();
         }
         info.badgeList = this.getBadgeCount(info);
+
         delete info.password;
+
         return info;
     }
 
-    async createProfile(id: number, createUserInfoDto: CreateUserInfoDto) {
+    async createProfile(id: number, createUserInfoDto: CreateUserInfoRequest) {
         const isDuplicated = await this.userService.checkNickname(createUserInfoDto.nickname);
         if (isDuplicated) {
             //중복
             throw new BadRequestException();
         }
+
         await this.userRepository.update(id, createUserInfoDto);
 
         return this.getProfile(id);
     }
 
-    async updateProfile(id: number, updateUserInfoDto: UpdateUserInfoDto) {
+    async updateProfile(id: number, updateUserInfoDto: UpdateUserInfoRequest) {
         if (updateUserInfoDto.nickname) {
             const isDuplicated = await this.userService.checkNickname(updateUserInfoDto.nickname);
             if (isDuplicated) {
