@@ -2,9 +2,10 @@ import { CreateUserInfoRequest, UpdateUserInfoRequest } from '@/modules/users/dt
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CommonService } from '@/modules/common/CommonService';
 import { UserService } from '@/modules/users/services/UserService';
+import { BadRequestException, NotFoundException } from '@/common/exceptions';
 
 export interface IBadgeCount {
     name: string;
@@ -74,12 +75,14 @@ export class UserProfileService {
         return data;
     }
 
-    public async getUserProfile(id: number) {
+    public async getProfile(id: number) {
         const info = await this.userRepository.findOne({
             where: { id },
             relations: ['forms', 'forms.tags'],
         });
-
+        if (!info) {
+            throw new NotFoundException();
+        }
         info.badgeList = this.getBadgeCount(info);
 
         delete info.password;
@@ -87,7 +90,7 @@ export class UserProfileService {
         return info;
     }
 
-    async createUserProfile(id: number, createUserInfoDto: CreateUserInfoRequest) {
+    async createProfile(id: number, createUserInfoDto: CreateUserInfoRequest) {
         const isDuplicated = await this.userService.checkNickname(createUserInfoDto.nickname);
         if (isDuplicated) {
             //중복
@@ -96,18 +99,18 @@ export class UserProfileService {
 
         await this.userRepository.update(id, createUserInfoDto);
 
-        return this.getUserProfile(id);
+        return this.getProfile(id);
     }
 
-    async updateUserProfile(id: number, updateUserInfoDto: UpdateUserInfoRequest) {
-        if (updateUserInfoDto.nickname !== undefined) {
+    async updateProfile(id: number, updateUserInfoDto: UpdateUserInfoRequest) {
+        if (updateUserInfoDto.nickname) {
             const isDuplicated = await this.userService.checkNickname(updateUserInfoDto.nickname);
             if (isDuplicated) {
                 throw new BadRequestException();
             }
         }
         await this.userRepository.update(id, updateUserInfoDto);
-        return this.getUserProfile(id);
+        return this.getProfile(id);
     }
 
     async updateProfileImage(id: number, file: Express.Multer.File) {
