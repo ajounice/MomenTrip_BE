@@ -21,6 +21,12 @@ import {
 } from '@/modules/forms/dtos';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
+import {
+    FormCommentListResponse,
+    FormCommentResponse,
+    FormListResponse,
+    FormResponse,
+} from '@/modules/forms/dtos/response';
 
 @Controller('forms')
 export class FormController {
@@ -32,8 +38,10 @@ export class FormController {
 
     @Get('/')
     @UseGuards(AuthGuard('jwt'))
-    getAll() {
-        return this.formService.getAll();
+    async getAll() {
+        const result = await this.formService.getAll();
+
+        return new FormListResponse(result);
     }
 
     @Post('/')
@@ -45,23 +53,23 @@ export class FormController {
         @UploadedFile() video: Express.Multer.File,
     ) {
         const { user } = req;
-        const createdForm = await this.formService.saveForm(body, video, user);
+        const result = await this.formService.saveForm(body, video, user);
 
-        if (!createdForm) {
-            console.log('failed');
+        if (!result) {
+            throw new BadRequestException('Failed to save form');
         } else {
-            return 'success';
+            return new FormResponse(result);
         }
     }
 
     @Get('/:id')
     @UseGuards(AuthGuard('jwt'))
     async findById(@Param('id') id: number) {
-        const form = await this.formService.findById(id);
-        if (!form) {
+        const result = await this.formService.findById(id);
+        if (!result) {
             throw new NotFoundException();
         }
-        return form;
+        return new FormResponse(result);
     }
 
     @Post('/:id/like')
@@ -75,13 +83,15 @@ export class FormController {
             throw new BadRequestException();
         }
 
-        return likeResult;
+        return { status: likeResult };
     }
 
     @Get('/:id/comments')
     @UseGuards(AuthGuard('jwt'))
     async getCommentsByFormId(@Param('id') id: number) {
-        return this.formCommentService.getCommentsByFormId(id);
+        const result = await this.formCommentService.getCommentsByFormId(id);
+
+        return new FormCommentListResponse(result);
     }
 
     @Post('/:id/comments')
@@ -91,16 +101,15 @@ export class FormController {
         @Param('id') id: number,
         @Body() request: SaveFormCommentRequest,
     ) {
-        // TODO: 유저 세션 관련 작업이 완료된 후 해당 세션을 사용하도록 변경해야 함
         const { id: userId } = req.user;
 
-        const comment = await this.formCommentService.saveComment(id, userId, request);
+        const result = await this.formCommentService.saveComment(id, userId, request);
 
-        if (!comment) {
+        if (!result) {
             throw new BadRequestException();
         }
 
-        return comment;
+        return new FormCommentResponse(result);
     }
 
     @Patch('/comments/:commentId')
@@ -112,13 +121,13 @@ export class FormController {
     ) {
         const { id } = req.user;
 
-        const updatedComment = await this.formCommentService.updateComment(commentId, id, request);
+        const result = await this.formCommentService.updateComment(commentId, id, request);
 
-        if (!updatedComment) {
+        if (!result) {
             throw new BadRequestException();
         }
 
-        return updatedComment;
+        return new FormCommentResponse(result);
     }
 
     @Delete('/comments/:commentId')
@@ -127,12 +136,12 @@ export class FormController {
         // TODO: 유저 세션 관련 작업이 완료된 후 해당 세션을 사용하도록 변경해야 함
         const { id } = req.user;
 
-        const deletedComment = await this.formCommentService.deleteComment(commentId, id);
+        const result = await this.formCommentService.deleteComment(commentId, id);
 
-        if (!deletedComment) {
+        if (!result) {
             throw new BadRequestException();
         }
 
-        return deletedComment;
+        return new FormCommentResponse(result);
     }
 }
