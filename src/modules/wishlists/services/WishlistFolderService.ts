@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { WishlistItem, WishlistFolder } from '@/modules/wishlists/entities';
+import { WishlistFolder } from '@/modules/wishlists/entities';
 import { Repository } from 'typeorm';
-import {
-    CreateWishlistFolderRequest,
-    CreateWishlistItemRequest,
-} from '@/modules/wishlists/dtos/requests';
-import { BadRequestException, ForbiddenException, NotFoundException } from '@/common/exceptions';
+import { CreateWishlistFolderRequest } from '@/modules/wishlists/dtos';
+import { BadRequestException, NotFoundException } from '@/common/exceptions';
 import { FormService } from '@/modules/forms/services';
 import { TourInfoService } from '@/modules/tourInfos/services';
+import { User } from '@/modules/users/entities';
 
 @Injectable()
 export class WishlistFolderService {
@@ -71,20 +69,16 @@ export class WishlistFolderService {
         return folders;
     }
 
-    async createFolder(
-        userId: number,
-        createWishlistFolderRequest: CreateWishlistFolderRequest,
-    ): Promise<WishlistFolder> {
-        const isDuplicated = await this.findByName(userId, createWishlistFolderRequest.name);
+    async createFolder(user: User, request: CreateWishlistFolderRequest): Promise<WishlistFolder> {
+        const isDuplicated = await this.findByName(user.id, request.name);
         if (isDuplicated) {
             //중복
             throw new BadRequestException('Duplicated folder name');
         }
-
-        const folder = new WishlistFolder();
-        folder.name = createWishlistFolderRequest.name;
-
-        return await this.wishlistFolderRepository.save(folder);
+        const folder = request.toEntity();
+        folder.name = request.name;
+        folder.user = user;
+        return this.wishlistFolderRepository.save(folder);
     }
 
     async deleteFolder(userId: number, folderId: number) {
@@ -95,6 +89,6 @@ export class WishlistFolderService {
         if (!folder) {
             throw new NotFoundException('Not exist folder');
         }
-        return await this.wishlistFolderRepository.remove(folder);
+        return this.wishlistFolderRepository.remove(folder);
     }
 }

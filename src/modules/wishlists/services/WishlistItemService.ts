@@ -19,14 +19,9 @@ export class WishlistItemService {
     ) {}
 
     async createWishlistItem(
-        userId: number,
         folderId: number,
         createWishlistItemRequest: CreateWishlistItemRequest,
     ) {
-        const isUser = this.wishlistFolderService.checkUser(userId, folderId);
-        if (!isUser) {
-            throw new ForbiddenException();
-        }
         const { type, targetId } = createWishlistItemRequest;
         const isDuplicated = await this.wishlistItemRepository.count({
             where: { type: type, targetId: targetId, wishlistFolder: { id: folderId } },
@@ -37,7 +32,6 @@ export class WishlistItemService {
         const item = new WishlistItem();
         item.targetId = targetId;
         item.type = type;
-        item.wishlistFolder = await this.wishlistFolderService.findById(userId, folderId);
         return await this.wishlistItemRepository.save(item);
     }
 
