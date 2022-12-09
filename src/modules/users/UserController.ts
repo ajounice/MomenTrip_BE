@@ -13,7 +13,11 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 import { UserService, UserProfileService, UserFollowService } from '@/modules/users/services';
-import { CreateUserInfoRequest, UpdateUserInfoRequest } from '@/modules/users/dto';
+import {
+    CreateUserInfoRequest,
+    UpdateUserInfoRequest,
+    UpdatePasswordRequest,
+} from '@/modules/users/dto/request';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -22,6 +26,7 @@ import {
     FollowResponse,
     IsFollowingResponse,
     UserListResponse,
+    UpdatePasswordResponse,
 } from '@/modules/users/dto/response';
 
 @UseGuards(AuthGuard('jwt'))
@@ -103,7 +108,14 @@ export class UserController {
         const path = await this.userProfileService.updateProfileImage(id, file);
         return new UserProfileImageResponse(path);
     }
-    //계정 변환(일반계정<->비즈니스)
+
+    @Patch('/my/edit/password')
+    async updatePassword(@Req() req, @Body() body: UpdatePasswordRequest) {
+        const { id } = req.user;
+        const response = await this.userService.updatePassword(id, body);
+
+        return new UpdatePasswordResponse(response);
+    }
 
     //탈퇴
     @Delete('/my/quit')

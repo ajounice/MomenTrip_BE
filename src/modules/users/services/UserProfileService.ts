@@ -1,4 +1,4 @@
-import { CreateUserInfoRequest, UpdateUserInfoRequest } from '@/modules/users/dto';
+import { CreateUserInfoRequest, UpdateUserInfoRequest } from '@/modules/users/dto/request';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
