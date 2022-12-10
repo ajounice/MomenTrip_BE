@@ -7,4 +7,7 @@ export class Tag {
 
     @Column({ unique: true, nullable: false })
     name!: string;
+
+    @Column({ default: 0 })
+    viewCount!: number;
 }
