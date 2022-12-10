@@ -18,20 +18,20 @@ export class WishlistItemService {
         private readonly formService: FormService,
     ) {}
 
-    async createWishlistItem(
-        folderId: number,
-        createWishlistItemRequest: CreateWishlistItemRequest,
-    ) {
-        const { type, targetId } = createWishlistItemRequest;
+    async createWishlistItem(userId: number, folderId: number, request: CreateWishlistItemRequest) {
+        const { type, targetId } = request;
+        const folder = await this.wishlistFolderService.findById(userId, folderId);
+        console.log(folder);
         const isDuplicated = await this.wishlistItemRepository.count({
             where: { type: type, targetId: targetId, wishlistFolder: { id: folderId } },
         });
         if (isDuplicated) {
             throw new ForbiddenException('Duplicated wishlist item');
         }
-        const item = new WishlistItem();
+        const item = request.toEntity();
         item.targetId = targetId;
         item.type = type;
+        item.wishlistFolder = folder;
         return await this.wishlistItemRepository.save(item);
     }
 
