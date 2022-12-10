@@ -10,7 +10,7 @@ export class TagService {
         private readonly tagRepository: Repository<Tag>,
     ) {}
 
-    private async findByName(name: string): Promise<Tag | null> {
+    public async findByName(name: string): Promise<Tag | null> {
         return this.tagRepository.findOne({ where: { name } });
     }
 
@@ -25,5 +25,12 @@ export class TagService {
         }
 
         return isExist;
+    }
+
+    public async sortByViews(): Promise<Tag[]> {
+        const [list, count] = await this.tagRepository.findAndCount({
+            order: { viewCount: 'DESC' },
+        });
+        return list;
     }
 }
