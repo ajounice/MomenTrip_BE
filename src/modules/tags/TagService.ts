@@ -11,7 +11,11 @@ export class TagService {
     ) {}
 
     public async findByName(name: string): Promise<Tag | null> {
-        return this.tagRepository.findOne({ where: { name } });
+        const tag = await this.tagRepository.findOne({ where: { name } });
+        if (tag) {
+            const viewsIncreased = await this.tagRepository.increment({ name }, 'viewCount', 1);
+        }
+        return tag;
     }
 
     public async saveTag(name: string): Promise<Tag> {
