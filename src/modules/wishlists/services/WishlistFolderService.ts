@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { WishlistItem, WishlistFolder } from '@/modules/wishlists/entities';
+import { WishlistFolder } from '@/modules/wishlists/entities';
 import { Repository } from 'typeorm';
-import {
-    CreateWishlistFolderRequest,
-    CreateWishlistItemRequest,
-} from '@/modules/wishlists/dtos/requests';
-import { ForbiddenException, NotFoundException } from '@/common/exceptions';
+import { CreateWishlistFolderRequest } from '@/modules/wishlists/dtos';
+import { BadRequestException, NotFoundException } from '@/common/exceptions';
 import { FormService } from '@/modules/forms/services';
 import { TourInfoService } from '@/modules/tourInfos/services';
+import { User } from '@/modules/users/entities';
 
 @Injectable()
 export class WishlistFolderService {
@@ -25,6 +23,24 @@ export class WishlistFolderService {
         });
         if (user) {
             //유저의 wishlist folder가 맞을 시
+            return true;
+        }
+        return false;
+    }
+
+    public async findById(userId: number, folderId: number) {
+        const folder = await this.wishlistFolderRepository.findOne({
+            where: { user: { id: userId }, id: folderId },
+        });
+
+        return folder;
+    }
+
+    private async findByName(userId: number, name: string) {
+        const folder = await this.wishlistFolderRepository.count({
+            where: { name: name, user: { id: userId } },
+        });
+        if (folder) {
             return true;
         }
         return false;
@@ -53,19 +69,25 @@ export class WishlistFolderService {
         return folders;
     }
 
-    createFolder(userId: number, request: CreateWishlistFolderRequest): Promise<WishlistFolder> {
-        const folder = request.toEntity(userId);
+    async createFolder(user: User, request: CreateWishlistFolderRequest): Promise<WishlistFolder> {
+        const isDuplicated = await this.findByName(user.id, request.name);
+        if (isDuplicated) {
+            //중복
+            throw new BadRequestException('Duplicated folder name');
+        }
+        const folder = request.toEntity();
+        folder.name = request.name;
+        folder.user = user;
         return this.wishlistFolderRepository.save(folder);
     }
 
     async deleteFolder(userId: number, folderId: number) {
         const folder = await this.wishlistFolderRepository.findOne({
             where: { user: { id: userId }, id: folderId },
-            relations: ['user'],
         });
 
         if (!folder) {
-            throw new NotFoundException();
+            throw new NotFoundException('Not exist folder');
         }
         return this.wishlistFolderRepository.remove(folder);
     }

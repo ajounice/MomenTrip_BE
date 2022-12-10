@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '@/modules/users/entities';
 import { WishlistItem } from '@/modules/wishlists/entities/WishlistItem';
 
@@ -14,16 +14,7 @@ export class WishlistFolder {
     user!: User;
 
     @OneToMany(() => WishlistItem, (wishlist) => wishlist.wishlistFolder, { onDelete: 'CASCADE' })
-    wishlists!: WishlistItem[];
-
-    static from(userId: number): WishlistFolder {
-        const folder = new WishlistFolder();
-
-        folder.user = new User();
-        folder.user.id = userId;
-
-        return folder;
-    }
+    wishlists?: WishlistItem[];
 
     images?: string[];
 }
