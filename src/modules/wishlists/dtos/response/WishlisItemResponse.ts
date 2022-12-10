@@ -4,7 +4,7 @@ export class WishlistItemResponse {
     public id: number;
     public type: string;
     public targetId: number;
-    public folder: { id: number };
+    public folder: WishlistFolder;
 
     constructor(record: WishlistItem) {
         this.id = record.id;

@@ -21,11 +21,7 @@ export class WishlistFolderService {
         const user = await this.wishlistFolderRepository.count({
             where: { id: folderId, user: { id: userId } },
         });
-        if (user) {
-            //유저의 wishlist folder가 맞을 시
-            return true;
-        }
-        return false;
+        return !!user;
     }
 
     public async findById(userId: number, folderId: number) {
@@ -40,10 +36,7 @@ export class WishlistFolderService {
         const folder = await this.wishlistFolderRepository.count({
             where: { name: name, user: { id: userId } },
         });
-        if (folder) {
-            return true;
-        }
-        return false;
+        return !!folder;
     }
 
     async getAllFolder(userId: number): Promise<WishlistFolder[]> {

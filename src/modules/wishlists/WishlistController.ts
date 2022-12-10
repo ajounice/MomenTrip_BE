@@ -48,18 +48,14 @@ export class WishlistController {
     async createWishlistItem(
         @Req() req,
         @Param('id') folderId: number,
-        @Body() createWishlistItemRequest: CreateWishlistItemRequest,
+        @Body() request: CreateWishlistItemRequest,
     ) {
         const { user } = req;
-        const folder = await this.wishlistFolderService.findById(user, folderId);
+        const folder = await this.wishlistFolderService.findById(user.id, folderId);
         if (!folder) {
             throw new NotFoundException('Not exist folder');
         }
-
-        const item = await this.wishlistItemService.createWishlistItem(
-            folderId,
-            createWishlistItemRequest,
-        );
+        const item = await this.wishlistItemService.createWishlistItem(user.id, folderId, request);
         if (!item) {
             throw new BadRequestException();
         }
@@ -74,11 +70,10 @@ export class WishlistController {
     ) {
         const { user } = req;
         const deletedWishlist = await this.wishlistItemService.deleteWishlistItem(
-            req.user.id,
+            user.id,
             folderId,
             wishId,
         );
-        console.log(deletedWishlist);
 
         if (!deletedWishlist) {
             throw new BadRequestException();
@@ -93,7 +88,8 @@ export class WishlistController {
         @Param('folderId') folderId: number,
         @Param('wishId') wishId: number,
     ) {
-        const item = await this.wishlistItemService.getWishlistItem(req.user.id, folderId, wishId);
+        const { user } = req;
+        const item = await this.wishlistItemService.getWishlistItem(user.id, folderId, wishId);
         return item;
     }
 }
