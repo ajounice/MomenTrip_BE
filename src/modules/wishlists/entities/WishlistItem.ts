@@ -19,13 +19,4 @@ export class WishlistItem {
 
     @ManyToOne(() => WishlistFolder, { onDelete: 'CASCADE' })
     wishlistFolder!: WishlistFolder;
-
-    static from(folderId: number): WishlistItem {
-        const item = new WishlistItem();
-
-        item.wishlistFolder = new WishlistFolder();
-        item.wishlistFolder.id = folderId;
-
-        return item;
-    }
 }

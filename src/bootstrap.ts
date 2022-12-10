@@ -3,9 +3,20 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from '@/AppModule';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 export const bootstrap = async (): Promise<NestExpressApplication> => {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+    const config = new DocumentBuilder()
+        .setTitle('Momentrip API Docs')
+        .setDescription('Momentrip API Docs')
+        .setVersion('1.0')
+        .build();
+
+    const document = SwaggerModule.createDocument(app, config);
+
+    SwaggerModule.setup('docs', app, document);
 
     app.disable('x-powered-by');
 

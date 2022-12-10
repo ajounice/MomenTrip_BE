@@ -16,56 +16,34 @@ export class UserFollowService {
         private readonly userService: UserService,
     ) {}
 
-    async follow(userId: number, otherUser: string) {
-        //대상 존재 체크
-        const isProvided = await this.userService.checkNickname(otherUser);
-        if (!isProvided) {
+    //팔로우 or 언팔로우
+    async toggleFollow(myId: number, userNickname: string) {
+        const isExist = await this.userService.checkNickname(userNickname);
+        if (!isExist) {
             throw new NotFoundException();
         }
-        const follower = await this.userService.findById(userId); //주체(follower)
-        const followed = await this.userService.findByNickname(otherUser); //대상(following)
+        const follower = await this.userService.findById(myId); //주체(follower)
+        const following = await this.userService.findByNickname(userNickname); //대상(following)
 
-        if (follower.id === followed.id) {
+        if (follower.id === following.id) {
             throw new BadRequestException();
         }
 
-        const isFollowed = await this.followRepository.count({
-            where: { follower: { id: userId }, following: { nickname: otherUser } },
+        //현재 팔로우 상태 확인
+        const followed = await this.followRepository.findOne({
+            where: { follower: { id: myId }, following: { nickname: userNickname } },
         });
 
-        if (isFollowed) {
-            throw new BadRequestException();
+        //언팔로우
+        if (followed) {
+            return await this.followRepository.remove(followed);
         }
+        //팔로우
         const follow = new Follow();
         follow.follower = follower;
-        follow.following = followed;
+        follow.following = following;
 
         return await this.followRepository.save(follow);
-    }
-
-    async unFollow(userId: number, otherUser: string) {
-        const isProvided = await this.userService.checkNickname(otherUser);
-        if (!isProvided) {
-            throw new NotFoundException();
-        }
-
-        const follower = await this.userService.findById(userId); //주체(follower)
-        const followed = await this.userService.findByNickname(otherUser); //대상(following)
-
-        if (follower.id === followed.id) {
-            throw new BadRequestException();
-        }
-
-        const follow = await this.followRepository.findOne({
-            where: { follower: { id: userId }, following: { nickname: otherUser } },
-        });
-
-
-        if (!follow) {
-            throw new BadRequestException();
-        }
-
-        return await this.followRepository.remove(follow);
     }
 
     async getAllFollower(nickname: string): Promise<User[]> {
@@ -86,48 +64,48 @@ export class UserFollowService {
         return users;
     }
 
-    async checkFollowing(userId: number, otherUser: string) {
+    async checkFollowing(myId: number, userNickname: string) {
         //대상 존재 체크
-        const isProvided = await this.userService.checkNickname(otherUser);
+        const isProvided = await this.userService.checkNickname(userNickname);
         if (!isProvided) {
             throw new NotFoundException();
         }
-        const follower = await this.userService.findById(userId); //주체(follower)
-        const followed = await this.userService.findByNickname(otherUser); //대상(following)
+        const follower = await this.userService.findById(myId); //주체(follower)
+        const following = await this.userService.findByNickname(userNickname); //대상(following)
 
-        if (follower.id === followed.id) {
+        if (follower.id === following.id) {
             throw new BadRequestException();
         }
 
-        const following = await this.followRepository.findOne({
-            where: { follower: { id: userId }, following: { nickname: otherUser } },
+        const follow = await this.followRepository.findOne({
+            where: { follower: { id: myId }, following: { nickname: userNickname } },
         });
 
-        if (following) {
+        if (follow) {
             return true;
         }
         return false;
     }
 
-    async checkFollower(userId: number, otherUser: string) {
+    async checkFollower(myId: number, userNickname: string) {
         //대상 존재 체크
-        const isProvided = await this.userService.checkNickname(otherUser);
+        const isProvided = await this.userService.checkNickname(userNickname);
         if (!isProvided) {
             throw new NotFoundException();
         }
 
-        const follower = await this.userService.findByNickname(otherUser); //주체(follower)
-        const followed = await this.userService.findById(userId); //대상(following)
+        const following = await this.userService.findById(myId); //대상(following)
+        const follower = await this.userService.findByNickname(userNickname); //주체(follower)
 
-        if (follower.id === followed.id) {
+        if (follower.id === following.id) {
             throw new BadRequestException();
         }
 
-        const following = await this.followRepository.findOne({
-            where: { follower: { nickname: otherUser }, following: { id: userId } },
+        const follow = await this.followRepository.findOne({
+            where: { follower: { nickname: userNickname }, following: { id: myId } },
         });
 
-        if (following) {
+        if (follow) {
             return true;
         }
         return false;

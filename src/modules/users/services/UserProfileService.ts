@@ -1,10 +1,11 @@
-import { CreateUserInfoDto, UpdateUserInfoDto } from '@/modules/users/dto';
+import { CreateUserInfoRequest, UpdateUserInfoRequest } from '@/modules/users/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CommonService } from '@/modules/common/CommonService';
 import { UserService } from '@/modules/users/services/UserService';
+import { BadRequestException, NotFoundException } from '@/common/exceptions';
 
 export interface IBadgeCount {
     name: string;
@@ -20,7 +21,22 @@ export class UserProfileService {
         private readonly userService: UserService,
     ) {}
 
-    private tagList = ['sea', 'mountain', 'hotel', 'camping', 'activity', 'festival', 'night'];
+    private tagList = [
+        'sea',
+        'mountain',
+        'hotel',
+        'camping',
+        'activity',
+        'festival',
+        'night',
+        '바다',
+        '산',
+        '숙소',
+        '캠핑',
+        '액티비티',
+        '축제',
+        '야경',
+    ];
 
     private getBadgeCount(user: User): IBadgeCount[] {
         let total = 0;
@@ -28,13 +44,21 @@ export class UserProfileService {
 
         user.forms.forEach((form) => {
             for (const tag of form.tags) {
-                if (this.tagList.includes(tag.name)) {
-                    if (tags.has(tag.name)) {
-                        tags.set(tag.name, tags.get(tag.name) + 1);
+                const idx = this.tagList.findIndex((item) => tag.name === item);
+                if (idx !== -1) {
+                    if (tags.has(this.tagList[idx % 7])) {
+                        tags.set(this.tagList[idx % 7], tags.get(this.tagList[idx % 7]) + 1);
                     } else {
-                        tags.set(tag.name, 1);
+                        tags.set(this.tagList[idx % 7], 1);
                     }
                 }
+                // if (this.tagList.includes(tag.name)) {
+                //     if (tags.has(tag.name)) {
+                //         tags.set(tag.name, tags.get(tag.name) + 1);
+                //     } else {
+                //         tags.set(tag.name, 1);
+                //     }
+                // }
             }
         });
 
@@ -51,12 +75,14 @@ export class UserProfileService {
         return data;
     }
 
-    public async getUserProfile(id: number) {
+    public async getProfile(id: number) {
         const info = await this.userRepository.findOne({
             where: { id },
             relations: ['forms', 'forms.tags'],
         });
-
+        if (!info) {
+            throw new NotFoundException();
+        }
         info.badgeList = this.getBadgeCount(info);
 
         delete info.password;
@@ -64,7 +90,7 @@ export class UserProfileService {
         return info;
     }
 
-    async createUserProfile(id: number, createUserInfoDto: CreateUserInfoDto) {
+    async createProfile(id: number, createUserInfoDto: CreateUserInfoRequest) {
         const isDuplicated = await this.userService.checkNickname(createUserInfoDto.nickname);
         if (isDuplicated) {
             //중복
@@ -73,18 +99,18 @@ export class UserProfileService {
 
         await this.userRepository.update(id, createUserInfoDto);
 
-        return this.getUserProfile(id);
+        return this.getProfile(id);
     }
 
-    async updateUserProfile(id: number, updateUserInfoDto: UpdateUserInfoDto) {
-        if (updateUserInfoDto.nickname !== undefined) {
+    async updateProfile(id: number, updateUserInfoDto: UpdateUserInfoRequest) {
+        if (updateUserInfoDto.nickname) {
             const isDuplicated = await this.userService.checkNickname(updateUserInfoDto.nickname);
             if (isDuplicated) {
                 throw new BadRequestException();
             }
         }
         await this.userRepository.update(id, updateUserInfoDto);
-        return this.getUserProfile(id);
+        return this.getProfile(id);
     }
 
     async updateProfileImage(id: number, file: Express.Multer.File) {

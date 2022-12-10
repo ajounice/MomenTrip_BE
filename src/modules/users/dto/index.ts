@@ -1,2 +1,2 @@
-export * from './UpdateUserInfoDto';
-export * from './CreateUserInfoDto';
+export * from './UpdateUserInfoRequest';
+export * from './CreateUserInfoRequest';
