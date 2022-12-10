@@ -39,6 +39,7 @@ export class FormService {
     async sortByViews(): Promise<Form[]> {
         const [list, count] = await this.formRepository.findAndCount({
             order: { viewCount: 'DESC' },
+            relations: ['tags', 'user'],
         });
         return list;
     }
