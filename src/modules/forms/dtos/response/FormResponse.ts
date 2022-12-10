@@ -1,4 +1,5 @@
 import { Form } from '@/modules/forms/entities';
+import { Tag } from '@/modules/tags/entities/Tag';
 
 export class FormResponse {
     public id: number;
@@ -13,6 +14,8 @@ export class FormResponse {
 
     public viewCount: number;
 
+    public tags: Tag[];
+
     constructor(record: Form) {
         this.id = record.id;
         this.content = record.content;
@@ -20,5 +23,6 @@ export class FormResponse {
         this.thumbnail = record.thumbnail;
         this.video = record.video;
         this.viewCount = record.viewCount;
+        this.tags = record.tags || [];
     }
 }
