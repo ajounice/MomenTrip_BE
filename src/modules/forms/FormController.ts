@@ -43,13 +43,6 @@ export class FormController {
         return new FormListResponse(result);
     }
 
-    @Get('/best')
-    async getBestForm() {
-        const result = await this.formService.sortByViews();
-
-        return new FormListResponse(result);
-    }
-
     @Post('/')
     @UseInterceptors(FileInterceptor('video'))
     async saveForm(

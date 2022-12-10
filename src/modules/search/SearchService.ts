@@ -6,11 +6,13 @@ import { SearchQuery } from '@/modules/search/dto';
 import { TourInfo } from '@/modules/tourInfos/entities';
 import { User } from '../users/entities';
 import { Form } from '@/modules/forms/entities';
+import { TagService } from '@/modules/tags/TagService';
 
 @Injectable()
 export class SearchService {
     constructor(
         private readonly formService: FormService,
+        private readonly tagService: TagService,
         private readonly tourInfoService: TourInfoService,
         private readonly userService: UserService,
     ) {}
@@ -23,6 +25,7 @@ export class SearchService {
             let tag: any[];
             if (query.tag) {
                 tag = query.tag.split(',');
+                tag.forEach((tag) => this.tagService.findByName(tag));
             }
             return await this.formService.getAll({ tag });
         }
