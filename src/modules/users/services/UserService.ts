@@ -1,7 +1,10 @@
+import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
+import { UpdatePasswordRequest } from '@/modules/users/dto/request';
+import { BadRequestException } from '@/common/exceptions';
 
 @Injectable()
 export class UserService {
@@ -36,5 +39,20 @@ export class UserService {
 
     public findByNickname(nickname: string): Promise<User> {
         return this.userRepository.findOne({ where: { nickname } });
+    }
+
+    public async updatePassword(userId: number, request: UpdatePasswordRequest) {
+        if (request.password !== request.passwordConfirmation) {
+            throw new BadRequestException('비밀번호 불일치');
+        }
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+
+        if (!user) {
+            throw new BadRequestException('유저 정보 오류');
+        }
+
+        user.password = bcrypt.hashSync(request.password, 10);
+
+        return this.userRepository.save(user);
     }
 }
