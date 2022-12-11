@@ -43,12 +43,12 @@ export class UserService {
 
     public async updatePassword(userId: number, request: UpdatePasswordRequest) {
         if (request.password !== request.passwordConfirmation) {
-            throw new BadRequestException();
+            throw new BadRequestException('비밀번호 불일치');
         }
         const user = await this.userRepository.findOne({ where: { id: userId } });
 
         if (!user) {
-            throw new BadRequestException();
+            throw new BadRequestException('유저 정보 오류');
         }
 
         user.password = bcrypt.hashSync(request.password, 10);
