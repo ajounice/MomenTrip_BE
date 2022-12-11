@@ -1,12 +1,15 @@
 import * as fs from 'fs';
 import { Injectable } from '@nestjs/common';
-import { FileStorage, VideoConverter } from '@/common/utils';
+import { FileStorage } from '@/common/utils';
+import { VideoProducer } from '@/common/utils/VideoProducer';
+import { v4 } from 'uuid';
+import { BadRequestException } from '@/common/exceptions';
 
 @Injectable()
 export class CommonService {
     constructor(
         private readonly fileStorage: FileStorage,
-        private readonly videoConverter: VideoConverter,
+        private readonly videoProducer: VideoProducer,
     ) {}
 
     async upload(data: Express.Multer.File, type: string): Promise<string> {
@@ -14,61 +17,31 @@ export class CommonService {
         return path;
     }
 
-    async uploadThumbnail(video: Express.Multer.File) {
-        const tmpPath = './tmp/tmpVideo';
-
-        const isExist = fs.existsSync('./tmp');
-
-        if (!isExist) {
-            fs.mkdirSync('./tmp');
+    async process(video: Express.Multer.File) {
+        if (!video.mimetype.includes('video')) {
+            throw new BadRequestException('Video File Required');
         }
 
-        fs.writeFileSync(tmpPath, video.buffer);
+        const key = `${v4()}-${+new Date()}`;
+        const localPath = `./tmp/${video.originalname.slice(0, 10)}-${+new Date()}`;
 
-        const savedThumbnail = await this.videoConverter.getThumbnail(tmpPath, video);
+        fs.mkdirSync(localPath);
 
-        const savedThumbnailBuffer = fs.readFileSync(savedThumbnail);
+        const thumbnailKey = `${key}-thumbnail`;
 
-        const thumbnailPath = await this.fileStorage.upload('thumbnails', {
-            buffer: savedThumbnailBuffer,
-            mimetype: 'image/png',
+        fs.writeFileSync(`${localPath}/${key}`, video.buffer);
+
+        const jobId = await this.videoProducer.addJobToQueue({
+            localPath,
+            thumbnailKey,
+            videoKey: key,
         });
 
-        fs.rmSync(tmpPath);
-        fs.rmSync(savedThumbnail);
-
-        fs.rmdirSync('./tmp');
-
-        return thumbnailPath;
-    }
-
-    async convert(video: Express.Multer.File) {
-        const tmpPath = './tmp/tmpVideo';
-
-        const isExist = fs.existsSync('./tmp');
-
-        if (!isExist) {
-            fs.mkdirSync('./tmp');
-        }
-
-        fs.writeFileSync(tmpPath, video.buffer);
-
-        const convertedVideo = await this.videoConverter.convertToH264(tmpPath, video);
-
-        console.log(fs.readdirSync('./tmp'));
-
-        const convertedVideoBuffer = fs.readFileSync(convertedVideo);
-
-        const videoPath = await this.fileStorage.upload('videos', {
-            buffer: convertedVideoBuffer,
-            mimetype: 'video/mp4',
-        });
-
-        fs.rmSync(tmpPath);
-        fs.rmSync(convertedVideo);
-
-        fs.rmdirSync('./tmp');
-
-        return videoPath;
+        return {
+            localPath,
+            thumbnailKey,
+            videoKey: key,
+            jobId,
+        };
     }
 }

@@ -1,2 +1,3 @@
 export * from './FileStorage';
-export * from './VideoConverter';
+export * from './VideoConsumer';
+export * from './VideoProducer';
