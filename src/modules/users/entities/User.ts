@@ -4,6 +4,7 @@ import { Follow } from '@/modules/users/entities/Follow';
 import { UserStatistics } from '@/modules/users/entities/UserStatistics';
 import { WishlistFolder } from '@/modules/wishlists/entities';
 import { Form } from '@/modules/forms/entities';
+import { Notify } from '@/modules/notification/entities';
 
 @Entity({ name: 'users' })
 export class User {
@@ -50,4 +51,7 @@ export class User {
     forms!: Form[];
 
     badgeList?: any[];
+
+    @OneToMany(() => Notify, (Notify) => Notify.user)
+    Notify!: Notify[];
 }
