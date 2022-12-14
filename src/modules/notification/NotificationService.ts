@@ -12,11 +12,11 @@ export class NotificationService {
         private readonly notifyRepository: Repository<Notify>,
     ) {}
 
-    public async saveNotification(type: string, data: number, user: User): Promise<Notify> {
+    public async saveNotification(type: string, data: number, target: User): Promise<Notify> {
         const notify = new Notify();
         notify.type = type;
         notify.data = data;
-        notify.user = user;
+        notify.user = target;
         console.log(notify);
         return this.notifyRepository.save(notify);
     }

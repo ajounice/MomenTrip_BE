@@ -5,9 +5,15 @@ import { UserFollowService, UserProfileService, UserService } from '@/modules/us
 import { AuthModule } from '@/modules/auth/AuthModule';
 import { CommonModule } from '@/modules/common/CommonModule';
 import { Follow, User } from '@/modules/users/entities';
+import { NotificationModule } from '@/modules/notification/NotificationModule';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User, Follow]), AuthModule, CommonModule],
+    imports: [
+        TypeOrmModule.forFeature([User, Follow]),
+        AuthModule,
+        CommonModule,
+        NotificationModule,
+    ],
     exports: [UserService],
     controllers: [UserController],
     providers: [UserService, UserProfileService, UserFollowService],

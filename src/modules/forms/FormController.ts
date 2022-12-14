@@ -77,10 +77,10 @@ export class FormController {
         const { id: userId } = req.user;
 
         const likeResult = await this.formLikeService.like(userId, id);
-
+        const form = await this.formService.findById(id);
         if (likeResult) {
             const type = 'LIKE';
-            await this.notificationService.saveNotification(type, id, req.user);
+            await this.notificationService.saveNotification(type, id, form.user);
         }
         return { status: likeResult };
     }
@@ -105,6 +105,8 @@ export class FormController {
         if (!result) {
             throw new BadRequestException();
         }
+        const type = 'COMMENT';
+        await this.notificationService.saveNotification(type, id, result.form.user);
 
         return new FormCommentResponse(result);
     }
@@ -118,10 +120,12 @@ export class FormController {
         const { id } = req.user;
 
         const result = await this.formCommentService.updateComment(commentId, id, request);
-
         if (!result) {
             throw new BadRequestException();
         }
+
+        const type = 'COMMENT';
+        await this.notificationService.saveNotification(type, id, result.form.user);
 
         return new FormCommentResponse(result);
     }
