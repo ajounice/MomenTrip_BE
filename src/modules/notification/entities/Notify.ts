@@ -1,12 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { WishType } from '@/modules/wishlists/entities';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '@/modules/users/entities';
 
-export enum NotifyType {
-    COMMENT = 'COMMENT ',
-    LIKE = 'LIKE',
-    FOLLOW = 'FOLLOW',
-}
 @Entity({ name: 'notify' })
 export class Notify {
     @PrimaryGeneratedColumn({ unsigned: true })
@@ -15,9 +9,10 @@ export class Notify {
     @ManyToOne(() => User)
     user!: User;
 
-    @Column({ type: 'enum', enum: NotifyType })
+    @Column({ nullable: false })
     type!: string;
 
-    @Column({ nullable: true })
-    data!: string;
+    @ManyToOne(() => User, (user) => user.Notify, { onDelete: 'CASCADE' })
+    @JoinColumn()
+    target!: User;
 }

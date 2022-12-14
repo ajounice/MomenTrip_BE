@@ -6,6 +6,7 @@ import { FormService, FormCommentService, FormLikeService } from '@/modules/form
 import { TagModule } from '@/modules/tags/TagModule';
 import { CommonModule } from '@/modules/common/CommonModule';
 import { TourInfoModule } from '@/modules/tourInfos/TourInfoModule';
+import { NotificationModule } from '@/modules/notification/NotificationModule';
 
 @Module({
     imports: [
@@ -13,6 +14,7 @@ import { TourInfoModule } from '@/modules/tourInfos/TourInfoModule';
         TagModule,
         CommonModule,
         TourInfoModule,
+        NotificationModule,
     ],
     controllers: [FormController],
     providers: [FormService, FormLikeService, FormCommentService],

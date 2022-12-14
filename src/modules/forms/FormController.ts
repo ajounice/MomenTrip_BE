@@ -27,6 +27,8 @@ import {
     FormListResponse,
     FormResponse,
 } from '@/modules/forms/dtos/response';
+import { NotificationService } from '@/modules/notification/NotificationService';
+
 @UseGuards(AuthGuard('jwt'))
 @Controller('forms')
 export class FormController {
@@ -34,6 +36,7 @@ export class FormController {
         private readonly formService: FormService,
         private readonly formLikeService: FormLikeService,
         private readonly formCommentService: FormCommentService,
+        private readonly notificationService: NotificationService,
     ) {}
 
     @Get('/')
@@ -73,12 +76,13 @@ export class FormController {
     async likeForm(@Req() req, @Param('id') id: number) {
         const { id: userId } = req.user;
 
-        const likeResult = this.formLikeService.like(userId, id);
+        const likeResult = await this.formLikeService.like(userId, id);
 
-        if (!likeResult) {
-            throw new BadRequestException();
+        if (likeResult) {
+            const form = await this.formService.findById(id);
+            const type = 'LIKE';
+            await this.notificationService.saveNotification(form.user, type, req.user);
         }
-
         return { status: likeResult };
     }
 
