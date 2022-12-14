@@ -51,7 +51,4 @@ export class User {
     forms!: Form[];
 
     badgeList?: any[];
-
-    @OneToMany(() => Notify, (Notify) => Notify.user)
-    Notify!: Notify[];
 }

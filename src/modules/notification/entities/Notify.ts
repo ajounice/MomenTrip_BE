@@ -7,12 +7,12 @@ export class Notify {
     id!: number;
 
     @ManyToOne(() => User)
+    @JoinColumn()
     user!: User;
 
     @Column({ nullable: false })
     type!: string;
 
-    @ManyToOne(() => User, (user) => user.Notify, { onDelete: 'CASCADE' })
-    @JoinColumn()
-    target!: User;
+    @Column({ unsigned: true })
+    data!: number;
 }

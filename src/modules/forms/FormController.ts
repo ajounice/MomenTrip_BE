@@ -79,9 +79,8 @@ export class FormController {
         const likeResult = await this.formLikeService.like(userId, id);
 
         if (likeResult) {
-            const form = await this.formService.findById(id);
             const type = 'LIKE';
-            await this.notificationService.saveNotification(form.user, type, req.user);
+            await this.notificationService.saveNotification(type, id, req.user);
         }
         return { status: likeResult };
     }

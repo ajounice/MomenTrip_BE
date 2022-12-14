@@ -10,20 +10,20 @@ export class NotificationService {
     constructor(
         @InjectRepository(Notify)
         private readonly notifyRepository: Repository<Notify>,
-        private readonly userService: UserService,
     ) {}
 
-    public async saveNotification(targetUser: User, type: string, user: User): Promise<Notify> {
+    public async saveNotification(type: string, data: number, user: User): Promise<Notify> {
         const notify = new Notify();
         notify.type = type;
+        notify.data = data;
         notify.user = user;
-        notify.target = targetUser;
+        console.log(notify);
         return this.notifyRepository.save(notify);
     }
 
     async getNotification(userId: number): Promise<Notify[]> {
         return await this.notifyRepository.find({
-            where: { target: { id: userId } },
+            where: { user: { id: userId } },
         });
     }
 }
