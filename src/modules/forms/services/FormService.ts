@@ -8,6 +8,7 @@ import { TourInfoService } from '@/modules/tourInfos/services';
 import { SaveFormRequest } from '@/modules/forms/dtos';
 import { BadRequestException } from '@/common/exceptions';
 import { User } from '@/modules/users/entities';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class FormService {
@@ -19,6 +20,7 @@ export class FormService {
         private readonly tagService: TagService,
         private readonly commonService: CommonService,
         private readonly tourInfoService: TourInfoService,
+        private readonly configService: ConfigService,
     ) {}
 
     public async getAll(query?: { tag: string[] }): Promise<Form[]> {
@@ -46,9 +48,7 @@ export class FormService {
     public async saveForm(body: SaveFormRequest, video: Express.Multer.File, user: User) {
         const entity = body.toEntity();
 
-        const { path: thumbnailPath } = await this.commonService.uploadThumbnail(video);
-
-        const { path: convertedVideoPath } = await this.commonService.convert(video);
+        const { thumbnailKey, videoKey } = await this.commonService.process(video);
 
         const info = await this.tourInfoService.findByName(body.site);
 
@@ -75,9 +75,11 @@ export class FormService {
             }
         }
 
-        entity.video = convertedVideoPath;
+        entity.video = `${this.configService.get<string>('AWS_BUCKET_URL')}videos/${videoKey}`;
 
-        entity.thumbnail = thumbnailPath;
+        entity.thumbnail = `${this.configService.get<string>(
+            'AWS_BUCKET_URL',
+        )}thumbnails/${thumbnailKey}`;
 
         entity.user = user;
 
