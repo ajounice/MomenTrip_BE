@@ -21,7 +21,6 @@ export class WishlistItemService {
     async createWishlistItem(userId: number, folderId: number, request: CreateWishlistItemRequest) {
         const { type, targetId } = request;
         const folder = await this.wishlistFolderService.findById(userId, folderId);
-        console.log(folder);
         const isDuplicated = await this.wishlistItemRepository.count({
             where: { type: type, targetId: targetId, wishlistFolder: { id: folderId } },
         });
