@@ -19,9 +19,18 @@ services:
             - mysql:/var/lib/mysql
         ports:
             - '3306:3306'
+    cache:
+        container_name: momentrip_redis
+        image: redis
+        restart: unless-stopped
+        volumes:
+            - cache:/data
+        ports:
+            - '6379:6379'
 
 networks:
     default:
 
 volumes:
     mysql:
+    cache:
