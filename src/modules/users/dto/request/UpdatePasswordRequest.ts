@@ -2,8 +2,11 @@ import { IsString } from 'class-validator';
 
 export class UpdatePasswordRequest {
     @IsString()
-    public password: string;
+    public currentPassword: string;
 
     @IsString()
-    public passwordConfirmation: string;
+    public changePassword: string;
+
+    @IsString()
+    public changePasswordConfirmation: string;
 }
