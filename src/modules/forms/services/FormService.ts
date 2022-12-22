@@ -38,11 +38,21 @@ export class FormService {
         return this.formRepository.find({ relations: ['tags', 'user'] });
     }
 
-    public findById(id: number): Promise<Form> {
-        return this.formRepository.findOne({
+    public async sortByViews(): Promise<Form[]> {
+        const [list, count] = await this.formRepository.findAndCount({
+            order: { viewCount: 'DESC' },
+            relations: ['tags', 'user'],
+        });
+        return list;
+    }
+
+    public async findById(id: number): Promise<Form> {
+        const form = await this.formRepository.findOne({
             where: { id },
             relations: ['tags', 'user', 'tourInfo'],
         });
+        const viewsIncreased = await this.formRepository.increment({ id }, 'viewCount', 1);
+        return form;
     }
 
     public async saveForm(body: SaveFormRequest, video: Express.Multer.File, user: User) {

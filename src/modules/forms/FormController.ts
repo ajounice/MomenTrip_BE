@@ -27,7 +27,7 @@ import {
     FormListResponse,
     FormResponse,
 } from '@/modules/forms/dtos/response';
-
+@UseGuards(AuthGuard('jwt'))
 @Controller('forms')
 export class FormController {
     constructor(
@@ -37,15 +37,20 @@ export class FormController {
     ) {}
 
     @Get('/')
-    @UseGuards(AuthGuard('jwt'))
     async getAll() {
         const result = await this.formService.getAll();
 
         return new FormListResponse(result);
     }
 
+    @Get('/best')
+    async getBestForm() {
+        const result = await this.formService.sortByViews();
+
+        return new FormListResponse(result);
+    }
+
     @Post('/')
-    @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('video'))
     async saveForm(
         @Req() req,
@@ -63,7 +68,6 @@ export class FormController {
     }
 
     @Get('/:id')
-    @UseGuards(AuthGuard('jwt'))
     async findById(@Param('id') id: number) {
         const result = await this.formService.findById(id);
         if (!result) {
@@ -73,7 +77,6 @@ export class FormController {
     }
 
     @Post('/:id/like')
-    @UseGuards(AuthGuard('jwt'))
     async likeForm(@Req() req, @Param('id') id: number) {
         const { id: userId } = req.user;
 
@@ -87,7 +90,6 @@ export class FormController {
     }
 
     @Get('/:id/comments')
-    @UseGuards(AuthGuard('jwt'))
     async getCommentsByFormId(@Param('id') id: number) {
         const result = await this.formCommentService.getCommentsByFormId(id);
 
@@ -95,7 +97,6 @@ export class FormController {
     }
 
     @Post('/:id/comments')
-    @UseGuards(AuthGuard('jwt'))
     async saveCommentToForm(
         @Req() req,
         @Param('id') id: number,
@@ -113,7 +114,6 @@ export class FormController {
     }
 
     @Patch('/comments/:commentId')
-    @UseGuards(AuthGuard('jwt'))
     async updateFormComment(
         @Req() req,
         @Param('commentId') commentId: number,
@@ -131,7 +131,6 @@ export class FormController {
     }
 
     @Delete('/comments/:commentId')
-    @UseGuards(AuthGuard('jwt'))
     async deleteFormComment(@Req() req, @Param('commentId') commentId: number) {
         // TODO: 유저 세션 관련 작업이 완료된 후 해당 세션을 사용하도록 변경해야 함
         const { id } = req.user;
