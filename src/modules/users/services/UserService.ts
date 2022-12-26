@@ -42,16 +42,20 @@ export class UserService {
     }
 
     public async updatePassword(userId: number, request: UpdatePasswordRequest) {
-        if (request.password !== request.passwordConfirmation) {
-            throw new BadRequestException('비밀번호 불일치');
+        if (request.changePassword !== request.changePasswordConfirmation) {
+            throw new BadRequestException('신규 비밀번호 검증 실패');
         }
         const user = await this.userRepository.findOne({ where: { id: userId } });
+
+        if (!bcrypt.compareSync(request.currentPassword, user.password)) {
+            throw new BadRequestException('현재 비밀번호 불일치');
+        }
 
         if (!user) {
             throw new BadRequestException('유저 정보 오류');
         }
 
-        user.password = bcrypt.hashSync(request.password, 10);
+        user.password = bcrypt.hashSync(request.changePassword, 10);
 
         return this.userRepository.save(user);
     }

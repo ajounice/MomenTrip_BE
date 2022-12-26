@@ -2,14 +2,14 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { SearchService } from '@/modules/search/SearchService';
 import { SearchQuery } from '@/modules/search/dto';
 import { Form } from '@/modules/forms/entities';
-import { TagListResponse } from '@/modules/tags/dto';
-import { TagService } from '@/modules/tags/TagService';
+import { FormListResponse } from '@/modules/forms/dtos/response';
+import { FormService } from '@/modules/forms/services';
 
 @Controller('search')
 export class SearchController {
     constructor(
         private readonly searchService: SearchService,
-        private readonly tagService: TagService,
+        private readonly formService: FormService,
     ) {}
 
     @Get('/')
@@ -25,10 +25,10 @@ export class SearchController {
         return this.searchService.getDefaultSearchData();
     }
 
-    @Get('/best-tag')
+    @Get('/best-form')
     async getBestForm() {
-        const result = await this.tagService.sortByViews();
+        const result = await this.formService.sortByViews();
 
-        return new TagListResponse(result);
+        return new FormListResponse(result);
     }
 }

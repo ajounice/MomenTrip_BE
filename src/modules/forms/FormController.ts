@@ -29,6 +29,7 @@ import {
 } from '@/modules/forms/dtos/response';
 import { NotificationService } from '@/modules/notification/NotificationService';
 
+
 @UseGuards(AuthGuard('jwt'))
 @Controller('forms')
 export class FormController {
@@ -42,6 +43,13 @@ export class FormController {
     @Get('/')
     async getAll() {
         const result = await this.formService.getAll();
+
+        return new FormListResponse(result);
+    }
+
+    @Get('/best')
+    async getBestForm() {
+        const result = await this.formService.sortByViews();
 
         return new FormListResponse(result);
     }

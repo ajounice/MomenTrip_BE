@@ -19,9 +19,10 @@ export class FileStorage {
     async upload(
         type: string,
         body: Pick<Express.Multer.File, 'buffer' | 'mimetype'>,
+        path?: string,
     ): Promise<{ path: string }> {
         try {
-            const key = `${type}/${v4()}`;
+            const key = path ? `${type}/${path}` : `${type}/${v4()}`;
             const result = await this.s3
                 .putObject({
                     Bucket: 'momentrip-bucket',
