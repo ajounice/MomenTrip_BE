@@ -10,8 +10,12 @@ export class TagService {
         private readonly tagRepository: Repository<Tag>,
     ) {}
 
-    private async findByName(name: string): Promise<Tag | null> {
-        return this.tagRepository.findOne({ where: { name } });
+    public async findByName(name: string): Promise<Tag | null> {
+        const tag = await this.tagRepository.findOne({ where: { name } });
+        if (tag) {
+            const viewsIncreased = await this.tagRepository.increment({ name }, 'viewCount', 1);
+        }
+        return tag;
     }
 
     public async saveTag(name: string): Promise<Tag> {
@@ -25,5 +29,12 @@ export class TagService {
         }
 
         return isExist;
+    }
+
+    public async sortByViews(): Promise<Tag[]> {
+        const [list, count] = await this.tagRepository.findAndCount({
+            order: { viewCount: 'DESC' },
+        });
+        return list;
     }
 }

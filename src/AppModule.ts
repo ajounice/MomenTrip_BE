@@ -13,6 +13,8 @@ import { LoggerMiddleware } from '@/common/middlewares';
 import { CommonModule } from '@/modules/common/CommonModule';
 import { SearchModule } from '@/modules/search/SearchModule';
 import { WishlistModule } from '@/modules/wishlists/WishlistModule';
+import { NotificationModule } from '@/modules/notification/NotificationModule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
     imports: [
@@ -31,6 +33,7 @@ import { WishlistModule } from '@/modules/wishlists/WishlistModule';
         CommonModule,
         WishlistModule,
         SearchModule,
+        NotificationModule,
     ],
     controllers: [],
     providers: [

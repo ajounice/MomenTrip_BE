@@ -8,6 +8,7 @@ import { User, UserStatistics, Badge, Follow } from '@/modules/users/entities';
 import { Tag } from '@/modules/tags/entities/Tag';
 import { WishlistItem } from '@/modules/wishlists/entities/WishlistItem';
 import { WishlistFolder } from '@/modules/wishlists/entities';
+import { Notify } from '@/modules/notification/entities';
 
 @Injectable()
 export class DatabaseConfigService implements TypeOrmOptionsFactory {
@@ -28,6 +29,7 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
             WishlistItem,
             WishlistFolder,
             Tag,
+            Notify,
         ];
     }
 

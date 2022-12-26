@@ -28,6 +28,7 @@ import {
     UserListResponse,
     UpdatePasswordResponse,
 } from '@/modules/users/dto/response';
+import { NotificationService } from '@/modules/notification/NotificationService';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('users')
@@ -36,6 +37,7 @@ export class UserController {
         private readonly userService: UserService,
         private readonly userProfileService: UserProfileService,
         private readonly userFollowService: UserFollowService,
+        private readonly notificationService: NotificationService,
     ) {}
 
     //프로필 확인(본인)
@@ -129,7 +131,10 @@ export class UserController {
     async follow(@Req() req, @Param('nickname') user: string) {
         const { id } = req.user;
         const result = await this.userFollowService.toggleFollow(id, user);
-
+        if (result) {
+            const type = 'FOLLOW';
+            await this.notificationService.saveNotification(type, id, result.following);
+        }
         return new FollowResponse(result);
     }
 
